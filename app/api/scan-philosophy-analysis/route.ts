@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 const DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions";
 
+export const maxDuration = 60;
+
 /** 约 280–320 字整体哲学短析：根据选择题结构摘要 + 开放题原文，循循善诱，不说教、不讨好 */
 export async function POST(req: Request) {
   const apiKey = req.headers.get("x-deepseek-key")?.trim();

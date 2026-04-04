@@ -112,8 +112,8 @@ export function AnalysisResultPanel({
             <div className="rounded-md border border-dashed border-[#EAEAEA] bg-white px-4 py-3 font-serif">
               <p className="text-xs font-bold text-stone-900">多维觉察分析表</p>
               <p className="mt-2 text-[11px] leading-relaxed text-stone-500">
-                本次未能生成表格（常见于未保存 DeepSeek Key、网络异常或模型未返回合法 JSON）。可检查首页或设置中的
-                Key 后，重新进入该快速觉察模块并完成答题以重试。
+                未能生成（多因未保存 Key、网络或模型解析失败；线上环境我们已改为并行请求以降低超时）。请确认首页/设置中的
+                Key 后重新完成流程；若仍失败，可稍后再试或升级 Vercel 以延长函数运行时间。
               </p>
             </div>
           )

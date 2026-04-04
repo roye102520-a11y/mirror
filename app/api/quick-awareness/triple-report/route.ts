@@ -1,6 +1,8 @@
 import { deepseekChat, resolveDeepseekApiKey } from "@/lib/server/deepseek";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 /** 三项快速觉察（关系/工作/自我成长）合并后的简易报告，约 280–400 字 */
 
 function mapUpstreamStatus(httpStatus: number): number {

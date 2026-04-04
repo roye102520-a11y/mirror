@@ -3,6 +3,8 @@ import type { PhilosophyKey } from "@/lib/result-narratives";
 import { deepseekChat, resolveDeepseekApiKey } from "@/lib/server/deepseek";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 const KINDS = ["daily", "random_question", "free_seed"] as const;
 type Kind = (typeof KINDS)[number];
 

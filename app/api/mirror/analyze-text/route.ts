@@ -10,6 +10,8 @@ import type { PhilosophyKey } from "@/lib/result-narratives";
 import { deepseekChat, resolveDeepseekApiKey } from "@/lib/server/deepseek";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 function parseTriple(raw: string): { emotion: string; obsession: string; question: string } | null {
   const m = raw.match(/\{[\s\S]*\}/);
   if (m) {
@@ -27,7 +29,7 @@ function parseTriple(raw: string): { emotion: string; obsession: string; questio
 }
 
 /**
- * 自由书写 / 随机一问：第一次调用产出三卡 JSON；第二次同路由内产出 analysis_table（六维）。
+ * 自由书写 / 随机一问：三卡 JSON 与六维表两次请求并行，避免托管平台串行超时导致无 analysis_table。
  */
 export async function POST(req: Request) {
   const apiKey = resolveDeepseekApiKey(req)?.trim();
@@ -74,19 +76,33 @@ export async function POST(req: Request) {
     .join("\n\n");
 
   try {
-    const completion = await deepseekChat({
-      apiKey,
-      messages: [
-        {
-          role: "system",
-          content:
-            "你是反思对话助手。只输出一段合法 JSON，键严格为 emotion、obsession、question（中文短句）。emotion：仅据用户正文可见的情绪；obsession：仅据正文可推的执着点，勿虚构情节；question：一句开放式提问。禁止编造用户未写的人、事、对白；禁止评判道德、预言关系结局、表情符号、Markdown。材料不足时用「尚不清晰」等诚实表述，勿杜撰细节。",
-        },
-        { role: "user", content: userLines },
-      ],
-      temperature: 0.45,
-      max_tokens: 512,
-    });
+    const dimUser = buildFreeMirrorDimensionUserMessage(philosophy, mode, promptContext, text);
+
+    const [completion, dimChat] = await Promise.all([
+      deepseekChat({
+        apiKey,
+        messages: [
+          {
+            role: "system",
+            content:
+              "你是反思对话助手。只输出一段合法 JSON，键严格为 emotion、obsession、question（中文短句）。emotion：仅据用户正文可见的情绪；obsession：仅据正文可推的执着点，勿虚构情节；question：一句开放式提问。禁止编造用户未写的人、事、对白；禁止评判道德、预言关系结局、表情符号、Markdown。材料不足时用「尚不清晰」等诚实表述，勿杜撰细节。",
+          },
+          { role: "user", content: userLines },
+        ],
+        temperature: 0.45,
+        max_tokens: 512,
+      }),
+      deepseekChat({
+        apiKey,
+        messages: [
+          { role: "system", content: QUICK_DIMENSION_SYSTEM_PROMPT },
+          { role: "user", content: dimUser },
+        ],
+        temperature: 0.35,
+        max_tokens: 512,
+        response_format: { type: "json_object" },
+      }),
+    ]);
 
     if (!completion.ok) {
       return NextResponse.json({ error: completion.message }, { status: 502 });
@@ -98,29 +114,14 @@ export async function POST(req: Request) {
     }
 
     let analysis_table: ReturnType<typeof parseQuickDimensionJson> = null;
-    try {
-      const dimUser = buildFreeMirrorDimensionUserMessage(philosophy, mode, promptContext, text);
-      const dimChat = await deepseekChat({
-        apiKey,
-        messages: [
-          { role: "system", content: QUICK_DIMENSION_SYSTEM_PROMPT },
-          { role: "user", content: dimUser },
-        ],
-        temperature: 0.35,
-        max_tokens: 512,
-        response_format: { type: "json_object" },
-      });
-      if (dimChat.ok) {
-        try {
-          analysis_table = parseQuickDimensionJson(dimChat.content);
-        } catch (parseErr) {
-          console.error("[analyze-text] analysis_table parse", parseErr);
-        }
-      } else {
-        console.error("[analyze-text] dimension call", dimChat.message);
+    if (dimChat.ok) {
+      try {
+        analysis_table = parseQuickDimensionJson(dimChat.content);
+      } catch (parseErr) {
+        console.error("[analyze-text] analysis_table parse", parseErr);
       }
-    } catch (dimErr) {
-      console.error("[analyze-text] dimension branch", dimErr);
+    } else {
+      console.error("[analyze-text] dimension call", dimChat.message);
     }
 
     return NextResponse.json({

@@ -5,6 +5,8 @@ import {
 } from "@/lib/server/deepseek";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 const MAX_SYSTEM_CHARS = 8000;
 const MAX_USER_CHARS = 12000;
 

@@ -9,6 +9,8 @@ import { deepseekChat, resolveDeepseekApiKey } from "@/lib/server/deepseek";
 import type { PhilosophyKey, QuickModuleId } from "@/lib/quick-awareness/types";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 function mapClientStatus(httpStatus: number): number {
   if (httpStatus >= 400 && httpStatus < 600) return httpStatus;
   return 502;

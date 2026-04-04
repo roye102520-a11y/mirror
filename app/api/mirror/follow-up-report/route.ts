@@ -4,6 +4,8 @@ import type { MirrorTone } from "@/lib/mirror-tone";
 import type { PhilosophyKey } from "@/lib/result-narratives";
 import { NextResponse } from "next/server";
 
+export const maxDuration = 60;
+
 /** 基于主反思 + 追问列表 + 用户补充，生成一段简易整合报告（约 200–320 字） */
 
 function mapUpstreamStatus(httpStatus: number): number {
