@@ -71,7 +71,7 @@ body::before {
   }
 }
 
-/* 右下角呼吸圈：吸气 4s → 呼气 4s，与小王子缩放共用节奏（ease-in-out / 8s） */
+/* 右下角呼吸圈：吸气 4s → 呼气 4s（ease-in-out / 8s） */
 @keyframes calm-breathe {
   0% {
     transform: scale(1);
@@ -87,22 +87,8 @@ body::before {
   }
 }
 
-@keyframes calm-breathe-scale {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.12);
-  }
-}
-
 .animate-calm-breathe {
   animation: calm-breathe 8s ease-in-out infinite;
-}
-
-.animate-calm-breathe-mascot {
-  animation: calm-breathe-scale 8s ease-in-out infinite;
 }
 
 .shadow-mirror {
@@ -187,69 +173,106 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
+/* ---------- 顶栏品牌 + EmotionalCompanion（mirror 旁） ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
 }
 
 .mirror-brand-anchor {
+  position: relative;
   display: inline-flex;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.125rem;
+  overflow: visible;
+  /* 抛物线跳跃预留空间，负 margin 抵销占位避免顶栏过宽 */
+  padding: 12px 56px 10px 26px;
+  margin: -12px -56px -10px -26px;
 }
 
-/* ---------- EmotionalCompanion：右下角贴呼吸圈，磨砂 + 与 calm-breathe 同步缩放 ---------- */
-.mascot-corner {
+/* EmotionalCompanion：pointer-events: none，z-index 低于 Link（z-60） */
+.mascot-header-root {
   position: relative;
   flex-shrink: 0;
-  opacity: 0.7;
-  z-index: 9999;
+  width: 40px;
+  height: 44px;
+  pointer-events: none;
+  z-index: 50;
 }
 
-.mascot-corner-bubble {
+.mascot-header-bubble {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: calc(100% + 6px);
   margin: 0;
-  padding: 4px 7px;
-  max-width: 10rem;
+  padding: 4px 8px;
+  max-width: 11rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.06);
+  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.07);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   font-size: 10px;
-  line-height: 1.3;
+  line-height: 1.35;
   color: var(--ink);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.85s ease;
+  z-index: 55;
 }
 
-.mascot-corner-bubble--visible {
+.mascot-header-bubble--on {
   opacity: 1;
 }
 
-.mascot-corner-glass {
-  border-radius: 12px;
-  padding: 6px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
-  transform-origin: center center;
+.mascot-header-jump {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform-origin: 50% 100%;
+  will-change: transform;
+  animation: playful-jump 15s linear infinite;
 }
 
-.mascot-corner-img {
+.mascot-header-img {
   display: block;
   width: 40px;
   min-width: 40px;
-  max-width: 40px;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
+}
+
+/*
+ * 15s：前 10s 静坐左侧；后 5s 抛物线到右侧 → 停留约 2s → 跳回左侧。
+ * 最高点略缩小、落地 squash & stretch。
+ */
+@keyframes playful-jump {
+  0%,
+  66.6667% {
+    transform: translate(-12px, 2px) scale(1);
+  }
+  70% {
+    transform: translate(4px, -22px) scale(0.88);
+  }
+  76.6667% {
+    transform: translate(34px, 4px) scale(1.1, 0.76);
+  }
+  78%,
+  90% {
+    transform: translate(34px, 2px) scale(1);
+  }
+  94% {
+    transform: translate(8px, -18px) scale(0.9);
+  }
+  99% {
+    transform: translate(-12px, 2px) scale(1.08, 0.78);
+  }
+  100% {
+    transform: translate(-12px, 2px) scale(1);
+  }
 }

@@ -1,33 +1,49 @@
 "use client";
 
-import princeImg from "@/assets/prince.png";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+
+/** public/prince.png，与物理文件一致 */
+const MASCOT_SRC = "/prince.png" as const;
+
+const CYCLE_MS = 15_000;
+const REST_MS = 10_000;
 
 export type EmotionalCompanionProps = {
-  /** 由 CalmCornerWidget 统一检测：鼠标靠近右下角（含呼吸圈）时为 true */
-  cornerHovered?: boolean;
+  /** 鼠标靠近 .mirror-brand-anchor（由父级监听） */
+  anchorHovered: boolean;
 };
 
 /**
- * 小王子：右下角 CalmCornerWidget 内，与呼吸圆圈同步缩放。
- * 图片经 import 打入构建产物，避免 Vercel 上 public 文件漏部署导致 404。
+ * 顶栏品牌旁：10s 静坐 + 5s 抛物线跳跃（playful-jump）；静止且靠近时缓缓显示气泡。
  */
-export function EmotionalCompanion({ cornerHovered = false }: EmotionalCompanionProps) {
+export function EmotionalCompanion({ anchorHovered }: EmotionalCompanionProps) {
+  const [inRestPhase, setInRestPhase] = useState(true);
+
+  useEffect(() => {
+    const tick = () => {
+      setInRestPhase((Date.now() % CYCLE_MS) < REST_MS);
+    };
+    tick();
+    const id = window.setInterval(tick, 120);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const showBubble = inRestPhase && anchorHovered;
+
   return (
-    <div className="mascot-corner" aria-hidden>
-      <p className={`mascot-corner-bubble${cornerHovered ? " mascot-corner-bubble--visible" : ""}`}>
-        别怕，我在。
+    <div className="mascot-header-root" aria-hidden>
+      <p className={`mascot-header-bubble${showBubble ? " mascot-header-bubble--on" : ""}`}>
+        今天天气不错，对吧？
       </p>
-      <div className="mascot-corner-glass animate-calm-breathe-mascot">
-        <Image
-          className="mascot-corner-img"
-          src={princeImg}
+      <div className="mascot-header-jump">
+        <img
+          className="mascot-header-img"
+          src={MASCOT_SRC}
           alt=""
           width={40}
           height={40}
-          unoptimized
-          priority
-          sizes="40px"
+          decoding="async"
+          draggable={false}
         />
       </div>
     </div>

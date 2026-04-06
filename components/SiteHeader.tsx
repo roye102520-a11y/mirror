@@ -1,16 +1,25 @@
 "use client";
 
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { ReadmeIntro } from "@/components/ReadmeIntro";
 import Link from "next/link";
+import { useState } from "react";
 
 export function SiteHeader() {
+  const [brandHover, setBrandHover] = useState(false);
+
   return (
     <header className="mirror-site-header overflow-visible border-b border-[var(--line)] bg-[rgba(250,248,252,0.72)] backdrop-blur-md">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 overflow-visible px-5 py-4">
-        <div className="mirror-brand-anchor">
+        <div
+          className="mirror-brand-anchor"
+          onMouseEnter={() => setBrandHover(true)}
+          onMouseLeave={() => setBrandHover(false)}
+        >
+          <EmotionalCompanion anchorHovered={brandHover} />
           <Link
             href="/"
-            className="mirror-brand-link text-sm tracking-wide text-[var(--ink)] lowercase"
+            className="mirror-brand-link relative z-[60] text-sm tracking-wide text-[var(--ink)] lowercase"
           >
             mirror
           </Link>
