@@ -1,11 +1,9 @@
-情感伙伴 · 像素画占位目录
+情感伙伴 · 占位说明
 ============================
 
-请将「小王子与狐狸」像素画（建议合成一张透明底 PNG）放到本目录，文件名为：
+顶栏小王子使用固定资源：
 
-  prince-fox.png
+  public/prince.png  →  URL /prince.png
 
-推荐尺寸：约 48×48 px 至 96×96 px（显示时会缩放到 48CSS 像素，并保持像素风锐化）。
-
-小王子与狐狸动画已改为全局组件 Mascot（public/prince.png）。
-本目录可忽略或自行删除。
+由组件 EmotionalCompanion（SiteHeader 内 .mirror-brand-anchor）渲染。
+本目录仅作文案占位，可忽略。
