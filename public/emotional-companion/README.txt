@@ -1,7 +1,7 @@
 情感伙伴 · 占位说明
 ============================
 
-小王子由 EmotionalCompanion 渲染，蹲在主要对话 textarea 旁（MirrorMascotField），
-图片固定为 public/prince.png → /prince.png。
+小王子（/prince.png）由 EmotionalCompanion 渲染，挂在 CalmCornerWidget
+右下角，与呼吸圆圈同步缩放。
 
 本目录可忽略。

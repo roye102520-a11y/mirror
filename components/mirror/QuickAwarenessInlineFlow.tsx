@@ -13,7 +13,6 @@ import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { getStoredDeepseekKey } from "@/lib/settings-storage";
 import { useEffect, useRef, useState } from "react";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
-import { MirrorMascotField } from "./MirrorMascotField";
 
 const FALLBACK_REFLECTION =
   "若愿自问：此刻心里最紧的那一处，在什么条件下会值得被轻轻松开一点点？";
@@ -332,19 +331,14 @@ export function QuickAwarenessInlineFlow({
                     requestAnimationFrame(() => openTextareaRef.current?.focus());
                   }}
                 />
-                <MirrorMascotField className="mt-2">
-                  {(m) => (
-                    <textarea
-                      ref={openTextareaRef}
-                      {...m}
-                      value={openTextDraft}
-                      onChange={(e) => setOpenTextDraft(e.target.value)}
-                      rows={4}
-                      placeholder={q.placeholder}
-                      className="w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-                    />
-                  )}
-                </MirrorMascotField>
+                <textarea
+                  ref={openTextareaRef}
+                  value={openTextDraft}
+                  onChange={(e) => setOpenTextDraft(e.target.value)}
+                  rows={4}
+                  placeholder={q.placeholder}
+                  className="mt-2 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+                />
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"

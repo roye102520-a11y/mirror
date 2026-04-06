@@ -4,6 +4,7 @@
  * 右下角：呼吸圈圈 + 「疗愈时空」环境音与背景渐变联动。
  * 音频许可见 lib/healing-space-scenes.ts
  */
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import {
   HEALING_SCENE_ORDER,
   HEALING_SCENES,
@@ -18,6 +19,7 @@ const GRADIENT_TRANSITION_MS = 10_000;
 export function CalmCornerWidget() {
   const [scene, setScene] = useState<HealingSceneId>("off");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cornerHovered, setCornerHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cancelGradientRef = useRef<(() => void) | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -88,30 +90,38 @@ export function CalmCornerWidget() {
 
   return (
     <div
-      className="pointer-events-none fixed right-0 z-[35] flex flex-col items-end gap-3 p-3 sm:p-4"
+      className="pointer-events-none fixed right-0 z-[9999] overflow-visible p-3 sm:p-4"
       style={{
         bottom: "max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem))",
         paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
       }}
     >
       <div
-        className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
-        role="region"
-        aria-label="呼吸练习示意"
+        className="pointer-events-auto flex flex-col items-end gap-3 overflow-visible"
+        onMouseEnter={() => setCornerHovered(true)}
+        onMouseLeave={() => setCornerHovered(false)}
       >
-        <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
+        <div className="flex max-w-[min(100%,calc(100vw-1.25rem))] flex-row items-end gap-2 overflow-visible">
+          <EmotionalCompanion cornerHovered={cornerHovered} />
           <div
-            className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
-            style={{ width: "56px", height: "56px" }}
-            aria-hidden
-          />
+            className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
+            role="region"
+            aria-label="呼吸练习示意"
+          >
+            <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
+              <div
+                className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
+                style={{ width: "56px", height: "56px" }}
+                aria-hidden
+              />
+            </div>
+            <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
+              跟着圆圈呼气吸气
+            </p>
+          </div>
         </div>
-        <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
-          跟着圆圈呼气吸气
-        </p>
-      </div>
 
-      <div ref={menuRef} className="pointer-events-auto relative">
+        <div ref={menuRef} className="relative">
         {menuOpen ? (
           <div
             className="mirror-healing-menu absolute bottom-full right-0 z-10 mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
@@ -165,6 +175,7 @@ export function CalmCornerWidget() {
             {scene === "off" ? "疗愈时空" : labelForScene(scene)}
           </span>
         </button>
+        </div>
       </div>
     </div>
   );

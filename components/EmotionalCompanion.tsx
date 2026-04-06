@@ -1,26 +1,26 @@
 "use client";
 
-/** 与 public/prince.png 对应，勿改路径 */
+/** 与 public/prince.png 对应 */
 const MASCOT_SRC = "/prince.png" as const;
 
 export type EmotionalCompanionProps = {
-  /** 输入框获得焦点：略放大并显示倾听气泡 */
-  listening?: boolean;
+  /** 由 CalmCornerWidget 统一检测：鼠标靠近右下角（含呼吸圈）时为 true */
+  cornerHovered?: boolean;
 };
 
 /**
- * 小王子：蹲在对话输入旁；极慢上下浮动；聚焦时 scale + 「我在听，慢慢说。」
+ * 小王子：固定在右下角 CalmCornerWidget 内，与呼吸圆圈同步缩放（8s = 4s 吸 + 4s 呼）。
+ * 整体磨砂玻璃感 + opacity 0.7（见 globals .mascot-corner）。
  */
-export function EmotionalCompanion({ listening = false }: EmotionalCompanionProps) {
+export function EmotionalCompanion({ cornerHovered = false }: EmotionalCompanionProps) {
   return (
-    <div
-      className={`mascot-by-input-root${listening ? " mascot-by-input-root--listening" : ""}`}
-      aria-hidden
-    >
-      <p className="mascot-by-input-bubble">我在听，慢慢说。</p>
-      <div className="mascot-by-input-float">
+    <div className="mascot-corner" aria-hidden>
+      <p className={`mascot-corner-bubble${cornerHovered ? " mascot-corner-bubble--visible" : ""}`}>
+        别怕，我在。
+      </p>
+      <div className="mascot-corner-glass animate-calm-breathe-mascot">
         <img
-          className="mascot-by-input-img"
+          className="mascot-corner-img"
           src={MASCOT_SRC}
           alt=""
           width={40}
