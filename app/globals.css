@@ -21,3 +21,20 @@ body {
   background: var(--bg);
   color: var(--ink);
 }
+
+/* 右下角「呼吸训练器」缓慢缩放动画 */
+@keyframes calm-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.38;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 0.52;
+  }
+}
+
+.animate-calm-breathe {
+  animation: calm-breathe 8s ease-in-out infinite;
+}

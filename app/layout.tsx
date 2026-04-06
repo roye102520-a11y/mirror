@@ -1,3 +1,4 @@
+import { CalmCornerWidget } from "@/components/CalmCornerWidget";
 import { RootErrorBoundary } from "@/components/RootErrorBoundary";
 import { QuickAwarenessProvider } from "@/context/QuickAwarenessContext";
 import { QuizProvider } from "@/context/QuizContext";
@@ -53,7 +54,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script id="fouc-fallback" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: foucFallback }} />
         <RootErrorBoundary>
           <QuizProvider>
-            <QuickAwarenessProvider>{children}</QuickAwarenessProvider>
+            <QuickAwarenessProvider>
+              {children}
+              <CalmCornerWidget />
+            </QuickAwarenessProvider>
           </QuizProvider>
         </RootErrorBoundary>
       </body>
