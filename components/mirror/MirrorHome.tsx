@@ -36,7 +36,7 @@ import {
   readStoredMirrorAutoStartQuiz,
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
+import { ChatInput } from "@/components/ChatInput";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
@@ -836,17 +836,15 @@ export function MirrorHome() {
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
             />
-            <div className="relative mt-3 overflow-visible">
-              <EmotionalCompanion />
-              <textarea
-                ref={freeTextareaRef}
-                value={freeText}
-                onChange={(e) => setFreeText(e.target.value)}
-                rows={12}
-                className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-                placeholder="写什么都可以。无需完整，只要对你真实。"
-              />
-            </div>
+            <ChatInput
+              ref={freeTextareaRef}
+              wrapperClassName="mt-3"
+              value={freeText}
+              onChange={(e) => setFreeText(e.target.value)}
+              rows={12}
+              className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+              placeholder="写什么都可以。无需完整，只要对你真实。"
+            />
             <button
               type="button"
               disabled={analyzeLoading}
@@ -992,16 +990,14 @@ export function MirrorHome() {
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
             />
-            <div className="relative mt-3 overflow-visible">
-              <EmotionalCompanion />
-              <textarea
-                ref={randomTextareaRef}
-                value={randomReply}
-                onChange={(e) => setRandomReply(e.target.value)}
-                rows={8}
-                className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-              />
-            </div>
+            <ChatInput
+              ref={randomTextareaRef}
+              wrapperClassName="mt-3"
+              value={randomReply}
+              onChange={(e) => setRandomReply(e.target.value)}
+              rows={8}
+              className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+            />
             <button
               type="button"
               disabled={analyzeLoading}
