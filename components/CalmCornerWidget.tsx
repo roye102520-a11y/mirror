@@ -174,7 +174,7 @@ export function CalmCornerWidget() {
         <div ref={menuRef} className="relative w-full min-w-0">
           {menuOpen && isMobileSheet ? (
             <div
-              className="mirror-healing-mobile-root fixed inset-0 z-[10050] flex flex-col justify-end pointer-events-auto"
+              className="mirror-healing-mobile-root fixed inset-0 z-[10080] flex flex-col justify-end pointer-events-auto"
               role="presentation"
               onClick={() => setMenuOpen(false)}
             >
@@ -196,7 +196,7 @@ export function CalmCornerWidget() {
 
           {menuOpen && !isMobileSheet ? (
             <div
-              className="mirror-healing-menu absolute bottom-full right-0 z-[10050] mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
+              className="mirror-healing-menu absolute bottom-full right-0 z-[10080] mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
               role="menu"
               aria-label="疗愈时空场景"
             >

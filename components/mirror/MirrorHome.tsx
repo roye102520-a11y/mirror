@@ -39,7 +39,6 @@ import {
 } from "@/lib/mirror-quiz-autostart";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
 import { MirrorInputCompanionCluster } from "./MirrorInputCompanionCluster";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
@@ -728,8 +727,10 @@ export function MirrorHome() {
         {view === "hub" && (
           <>
             <div className="mirror-hub-slogan-hero relative z-[40] mx-auto mt-10 max-w-xl overflow-visible px-1">
-              <div className="mirror-hub-title-row relative z-10 mx-auto flex min-h-[5.5rem] flex-col items-center justify-end pt-4">
-                <EmotionalCompanion />
+              <div
+                data-mirror-companion-anchor="hub-title"
+                className="mirror-hub-title-row relative z-10 mx-auto flex min-h-[5.5rem] flex-col items-center justify-end pt-4"
+              >
                 <p className="relative z-20 text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">
                   mirror
                 </p>

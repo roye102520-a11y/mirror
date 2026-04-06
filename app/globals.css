@@ -36,6 +36,17 @@ body {
   overflow-x: visible;
 }
 
+/* 主壳与小王子路径：尽量不裁切 fixed 层（滚动仍由视口承担） */
+.mirror-app-shell,
+.mirror-app-main {
+  overflow: visible !important;
+}
+
+/* 让小王子 fixed 动效尽量不被子页面 main 裁切 */
+main {
+  overflow: visible !important;
+}
+
 /* 流体渐变背景：色值由 --mirror-bg-* 决定（疗愈时空切换时平滑变色），位置仍缓慢游移 */
 body::before {
   content: "";
@@ -234,7 +245,32 @@ body::before {
   opacity: 1;
 }
 
-/* ---------- 首页 hub：mirror 标题上方左/右 random-appearance（15–20s 间隔由 JS 触发） ---------- */
+/* ---------- 全局 EmotionalPulse：背景脉动曲线 ---------- */
+.emotional-pulse-layer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: min(28vh, 9rem);
+  z-index: 5;
+  pointer-events: none;
+  overflow: visible;
+  color: var(--accent);
+}
+
+.emotional-pulse-svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.14;
+  transition: opacity 0.45s ease, color 0.45s ease;
+}
+
+.emotional-pulse-svg--lit {
+  opacity: 0.42;
+  color: var(--ink);
+}
+
+/* ---------- EmotionalCompanion：全局 fixed，锚点由 data-mirror-companion-anchor ---------- */
 .mirror-hub-slogan-hero {
   padding-top: 0.5rem;
 }
@@ -244,26 +280,15 @@ body::before {
   width: 100%;
 }
 
-.mirror-emotional-companion {
-  position: absolute;
-  bottom: calc(100% - 2px);
+.mirror-emotional-companion-global {
+  position: fixed;
+  z-index: 100 !important;
   width: 60px;
   pointer-events: none;
-  z-index: 15;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* 标题中线左右，不压住 mirror 文案（z-20） */
-.mirror-emotional-companion--left {
-  left: calc(50% - 4.25rem);
-  transform: translateX(-50%);
-}
-
-.mirror-emotional-companion--right {
-  left: calc(50% + 4.25rem);
-  transform: translateX(-50%);
+  overflow: visible;
 }
 
 .mirror-mascot-random-burst {
@@ -342,12 +367,3 @@ body::before {
   }
 }
 
-@media (max-width: 520px) {
-  .mirror-emotional-companion--left {
-    left: calc(50% - min(4.25rem, 24vw));
-  }
-
-  .mirror-emotional-companion--right {
-    left: calc(50% + min(4.25rem, 24vw));
-  }
-}
