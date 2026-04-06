@@ -38,10 +38,10 @@ import {
 } from "@/lib/mirror-quiz-autostart";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
+import { HubPlayfulMascot } from "./HubPlayfulMascot";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
-import { SloganPrince } from "./SloganPrince";
 
 type View = "hub" | "free" | "quick" | "random" | "result" | "quick-triple-report";
 
@@ -715,16 +715,15 @@ export function MirrorHome() {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
-      <main className="relative mx-auto w-full max-w-3xl flex-1 px-5 py-16 sm:px-6 sm:py-20">
+      <main className="relative mx-auto w-full max-w-3xl flex-1 overflow-visible px-5 py-16 sm:px-6 sm:py-20">
         {view === "hub" && (
           <>
             <p className="text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">mirror</p>
-            <SloganPrince>
-              <p className="text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-                We cannot control others. But we can see ourselves clearly.
-              </p>
-            </SloganPrince>
-            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
+            <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
+              We cannot control others. But we can see ourselves clearly.
+            </p>
+            <div className="relative mx-auto mt-10 max-w-xl overflow-visible rounded-lg border border-[var(--line)] bg-white px-6 pb-6 pt-14 text-left shadow-mirror sm:px-7 sm:pb-7 sm:pt-16">
+              <HubPlayfulMascot />
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
