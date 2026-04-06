@@ -1,6 +1,6 @@
 "use client";
 
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
+import { EmotionalCompanion } from "./EmotionalCompanion";
 import { ReadmeIntro } from "@/components/ReadmeIntro";
 import Link from "next/link";
 

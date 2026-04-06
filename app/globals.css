@@ -184,13 +184,16 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- EmotionalCompanion（mascot-*）：顶栏 mirror 椭圆 guarding + 子级 vertical-float ---------- */
+/* ---------- Mascot（--mascot-* 变量 + .mascot-* 类名）：顶栏 mirror 椭圆 + 上下浮动 ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
-  overflow: visible;
 }
 
+/*
+ * overflow: visible 仅在此处声明一次（名字容器），避免轨道被裁切。
+ * .mirror-site-header 默认即为 visible，不再重复写。
+ */
 .mirror-brand-anchor {
   --mascot-rx: min(50px, max(28px, calc(50vw - 120px)));
   --mascot-ry: min(24px, max(12px, calc(0.45 * var(--mascot-rx))));
@@ -231,7 +234,7 @@ body::before {
   overflow: visible;
 }
 
-/* 仅此层：椭圆轨道 guarding（单条 animation） */
+/* 子元素各司其职：轨道仅 mascot-orbit，浮动仅 mascot-vertical-bob（各一条 animation） */
 .mascot-orbit {
   position: absolute;
   left: 50%;
@@ -239,23 +242,22 @@ body::before {
   width: 0;
   height: 0;
   offset-rotate: 0deg;
-  animation: guarding-fallback 12s ease-in-out infinite;
+  animation: mascot-orbit-fallback 12s ease-in-out infinite;
 }
 
 @supports (offset-path: ellipse(12px 8px at 0 0)) {
   .mascot-orbit {
     offset-path: ellipse(var(--mascot-rx) var(--mascot-ry) at 0 0);
-    animation: guarding 12s ease-in-out infinite;
+    animation: mascot-orbit 12s ease-in-out infinite;
   }
 }
 
-/* 仅此层：上下浮动 vertical-float（单条 animation），与轨道父子分离避免覆盖 */
 .mascot-vertical-bob {
   position: absolute;
   left: 0;
   top: 0;
   will-change: transform;
-  animation: vertical-float 1s ease-in-out infinite;
+  animation: mascot-bob 1s ease-in-out infinite;
 }
 
 .mascot-bubble {
@@ -283,6 +285,8 @@ body::before {
 .mascot-img {
   display: block;
   width: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
   height: auto;
   position: relative;
   z-index: 100;
@@ -292,10 +296,10 @@ body::before {
   image-rendering: crisp-edges;
   transform-origin: center bottom;
   transition: opacity 0.5s ease;
-  animation: guarding-depth 12s ease-in-out infinite;
+  animation: mascot-orbit-depth 12s ease-in-out infinite;
 }
 
-@keyframes guarding {
+@keyframes mascot-orbit {
   0% {
     offset-distance: 0%;
     z-index: 40;
@@ -315,7 +319,7 @@ body::before {
 }
 
 /* 绕到文字后时半透明，关键帧拉长过渡区 + img 上 transition 辅助观感 */
-@keyframes guarding-depth {
+@keyframes mascot-orbit-depth {
   0%,
   36% {
     opacity: 1;
@@ -335,7 +339,7 @@ body::before {
   }
 }
 
-@keyframes vertical-float {
+@keyframes mascot-bob {
   0%,
   100% {
     transform: translate(-50%, calc(-50% + 2px));
@@ -345,7 +349,7 @@ body::before {
   }
 }
 
-@keyframes guarding-fallback {
+@keyframes mascot-orbit-fallback {
   0% {
     transform: translate(-50%, -50%) translateX(var(--mascot-rx));
     z-index: 40;

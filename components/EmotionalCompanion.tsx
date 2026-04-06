@@ -1,9 +1,10 @@
 "use client";
 
+/** 与 public/prince.png 对应，勿改路径 */
+const MASCOT_SRC = "/prince.png" as const;
+
 /**
- * 小王子：SiteHeader 内「mirror」旁椭圆轨道 + 子级上下浮动。
- * 图片固定 public/prince.png → /prince.png
- * 动画：轨道在 .mascot-orbit（guarding），浮动仅在 .mascot-vertical-bob（vertical-float）。
+ * 小王子：SiteHeader 内「mirror」旁椭圆轨道（mascot-orbit）+ 子级浮动（mascot-bob）。
  */
 export function EmotionalCompanion() {
   return (
@@ -13,7 +14,7 @@ export function EmotionalCompanion() {
           <p className="mascot-bubble">你也是一个人吗？</p>
           <img
             className="mascot-img"
-            src="/prince.png"
+            src={MASCOT_SRC}
             alt=""
             width={40}
             decoding="async"
