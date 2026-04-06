@@ -10,7 +10,7 @@ export function SiteHeader() {
         <div className="mirror-brand-anchor">
           <Link
             href="/"
-            className="mirror-brand-link relative z-[70] text-sm tracking-wide text-[var(--ink)] lowercase"
+            className="mirror-brand-link relative z-[60] text-sm tracking-wide text-[var(--ink)] lowercase"
           >
             mirror
           </Link>

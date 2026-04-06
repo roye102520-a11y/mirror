@@ -18,7 +18,7 @@ const GRADIENT_TRANSITION_MS = 10_000;
 export function CalmCornerWidget() {
   const [scene, setScene] = useState<HealingSceneId>("off");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [nearBottomRight, setNearBottomRight] = useState(false);
+  const [cornerHovered, setCornerHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cancelGradientRef = useRef<(() => void) | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -82,123 +82,107 @@ export function CalmCornerWidget() {
     };
   }, [menuOpen]);
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const zoneX = Math.min(220, w * 0.42);
-      const zoneY = Math.min(200, h * 0.34);
-      setNearBottomRight(e.clientX > w - zoneX && e.clientY > h - zoneY);
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-
   const pickScene = useCallback((id: HealingSceneId) => {
     setScene(id);
     setMenuOpen(false);
   }, []);
 
   return (
-    <>
+    <div
+      className="pointer-events-none fixed right-0 isolate z-[9999] overflow-visible p-3 sm:p-4"
+      data-mirror-calm-corner=""
+      style={{
+        bottom: "max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem))",
+        paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
+      }}
+    >
       <div
-        className="pointer-events-none fixed right-0 isolate z-[9999] overflow-visible p-3 sm:p-4"
-        data-mirror-calm-corner=""
-        style={{
-          bottom: "max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem))",
-          paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
-        }}
+        className="pointer-events-auto flex flex-col items-end gap-3 overflow-visible"
+        onMouseEnter={() => setCornerHovered(true)}
+        onMouseLeave={() => setCornerHovered(false)}
       >
-        <div className="pointer-events-auto flex flex-col items-end gap-3 overflow-visible">
-          <div className="flex max-w-[min(100%,calc(100vw-1.25rem))] flex-row items-end justify-end gap-2 overflow-visible">
-            <div
-              className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
-              role="region"
-              aria-label="呼吸练习示意"
-            >
-              <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
-                <div
-                  className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
-                  style={{ width: "56px", height: "56px" }}
-                  aria-hidden
-                />
-              </div>
-              <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
-                跟着圆圈呼气吸气
-              </p>
-            </div>
-          </div>
-
-          <div ref={menuRef} className="relative">
-            {menuOpen ? (
-              <div
-                className="mirror-healing-menu absolute bottom-full right-0 z-10 mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
-                role="menu"
-                aria-label="疗愈时空场景"
+        <div className="flex max-w-[min(100%,calc(100vw-1.25rem))] flex-row items-end justify-end gap-2 overflow-visible">
+          <div
+            className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
+            role="region"
+            aria-label="呼吸练习示意"
+          >
+            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16">
+              <p
+                className={`calm-corner-reassurance-bubble${cornerHovered ? " calm-corner-reassurance-bubble--visible" : ""}`}
+                aria-hidden
               >
-                {HEALING_SCENE_ORDER.map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    role="menuitem"
-                    onClick={() => pickScene(key)}
-                    className={[
-                      "mirror-no-hover block w-full px-3 py-2.5 text-left text-xs transition-colors",
-                      scene === key
-                        ? "bg-white/55 font-medium text-[var(--ink)]"
-                        : "bg-transparent text-[var(--ink)] hover:bg-white/40",
-                    ].join(" ")}
-                  >
-                    {HEALING_SCENES[key].label}
-                  </button>
-                ))}
-                <div className="mx-2 border-t border-white/40" role="separator" />
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => pickScene("off")}
-                  className="mirror-no-hover block w-full px-3 py-2.5 text-left text-xs text-[var(--muted)] hover:bg-white/40"
-                >
-                  关闭环境音
-                </button>
-              </div>
-            ) : null}
-
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              aria-expanded={menuOpen}
-              aria-haspopup="menu"
-              aria-label={scene === "off" ? "打开疗愈时空选单" : `当前：${labelForScene(scene)}，打开选单`}
-              title="疗愈时空"
-              className={[
-                "shadow-mirror flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border px-3.5 py-2 text-xs transition sm:min-w-[44px]",
-                scene !== "off"
-                  ? "border-stone-400 bg-stone-600 text-white"
-                  : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",
-              ].join(" ")}
-            >
-              <HealingIcon className="h-4 w-4 shrink-0 opacity-90" />
-              <span className="max-w-[5.5rem] truncate sm:max-w-[7rem]">
-                {scene === "off" ? "疗愈时空" : labelForScene(scene)}
-              </span>
-            </button>
+                别怕，我在。
+              </p>
+              <div
+                className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
+                style={{ width: "56px", height: "56px" }}
+                aria-hidden
+              />
+            </div>
+            <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
+              跟着圆圈呼气吸气
+            </p>
           </div>
         </div>
-      </div>
 
-      <div className="corner-reassurance-layer" aria-hidden>
-        <p
-          className={
-            nearBottomRight
-              ? "corner-reassurance-bubble corner-reassurance-bubble--visible"
-              : "corner-reassurance-bubble"
-          }
+        <div ref={menuRef} className="relative">
+        {menuOpen ? (
+          <div
+            className="mirror-healing-menu absolute bottom-full right-0 z-10 mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
+            role="menu"
+            aria-label="疗愈时空场景"
+          >
+            {HEALING_SCENE_ORDER.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="menuitem"
+                onClick={() => pickScene(key)}
+                className={[
+                  "mirror-no-hover block w-full px-3 py-2.5 text-left text-xs transition-colors",
+                  scene === key
+                    ? "bg-white/55 font-medium text-[var(--ink)]"
+                    : "bg-transparent text-[var(--ink)] hover:bg-white/40",
+                ].join(" ")}
+              >
+                {HEALING_SCENES[key].label}
+              </button>
+            ))}
+            <div className="mx-2 border-t border-white/40" role="separator" />
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => pickScene("off")}
+              className="mirror-no-hover block w-full px-3 py-2.5 text-left text-xs text-[var(--muted)] hover:bg-white/40"
+            >
+              关闭环境音
+            </button>
+          </div>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          aria-label={scene === "off" ? "打开疗愈时空选单" : `当前：${labelForScene(scene)}，打开选单`}
+          title="疗愈时空"
+          className={[
+            "shadow-mirror flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border px-3.5 py-2 text-xs transition sm:min-w-[44px]",
+            scene !== "off"
+              ? "border-stone-400 bg-stone-600 text-white"
+              : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",
+          ].join(" ")}
         >
-          别怕，我在。
-        </p>
+          <HealingIcon className="h-4 w-4 shrink-0 opacity-90" />
+          <span className="max-w-[5.5rem] truncate sm:max-w-[7rem]">
+            {scene === "off" ? "疗愈时空" : labelForScene(scene)}
+          </span>
+        </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -187,10 +187,10 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 顶栏品牌：高于首页小王子 (z-50)，保证 Mirror 可点 ---------- */
+/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
-  z-index: 60;
+  z-index: 10;
 }
 
 .mirror-brand-anchor {
@@ -198,155 +198,94 @@ body::before {
   align-items: center;
 }
 
-/* ---------- 首页 hub：小王子抛物跳跃（15s）+ 与呼吸圈同节奏缩放 ---------- */
+/* 右下角：仅靠呼吸圈上方浮现；须盖过页内装饰但不拦截点击 */
+.calm-corner-reassurance-bubble {
+  position: absolute;
+  z-index: 9999;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  margin: 0;
+  transform: translateX(-50%);
+  padding: 3px 6px;
+  max-width: 11rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 9px;
+  line-height: 1.25;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s ease;
+}
+
+.calm-corner-reassurance-bubble--visible {
+  opacity: 1;
+}
+
+/* ---------- 首页 hub：slogan 与「完整扫描」之间；位移与呼吸缩放分层，避免 transform 互覆盖 ---------- */
 @keyframes playful-jump {
+  /* 10s / 15s ≈ 66.67%：静坐（靠左，像待在名字/文案一侧） */
   0%,
-  66.666% {
-    left: 12%;
-    bottom: 0;
+  66.6667% {
+    transform: translate3d(-7.5rem, 0, 0);
   }
+  /* ~1.2s：抛向右上方 */
   70% {
-    left: 50%;
-    bottom: 56px;
+    transform: translate3d(0, -3.25rem, 0);
   }
-  73.333% {
-    left: 84%;
-    bottom: 0;
+  /* 落地右侧后停留 ~1.8s */
+  74.6667%,
+  86.6667% {
+    transform: translate3d(7.5rem, 0, 0);
   }
-  73.333%,
-  86.666% {
-    left: 84%;
-    bottom: 0;
-  }
-  90% {
-    left: 50%;
-    bottom: 38px;
+  /* ~2s：跳回左侧 */
+  91% {
+    transform: translate3d(0, -2.75rem, 0);
   }
   100% {
-    left: 12%;
-    bottom: 0;
+    transform: translate3d(-7.5rem, 0, 0);
   }
 }
 
-.hub-playful-mascot-root {
+.hub-mascot-stage {
   position: relative;
   z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 4.5rem;
+  overflow: visible;
   opacity: 0.7;
-  pointer-events: none;
 }
 
-.hub-playful-mascot-rail {
-  min-height: 5.25rem;
-  pointer-events: auto;
+.hub-mascot-hop {
+  animation: playful-jump 15s linear infinite;
+  will-change: transform;
 }
 
-.hub-playful-mascot-jumper {
-  position: absolute;
-  bottom: 0;
-  left: 12%;
-  width: 0;
-  height: 0;
-  overflow: visible;
-  animation: playful-jump 15s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
-  pointer-events: none;
-}
-
-.hub-playful-mascot-jumper-inner {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-50%);
-  overflow: visible;
-  pointer-events: none;
-}
-
-.hub-playful-mascot-glass {
+.hub-mascot-glass {
   border-radius: 12px;
-  padding: 5px;
+  padding: 6px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.32);
-  border: 1px solid rgba(255, 255, 255, 0.48);
-  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.07);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
   transform-origin: center center;
 }
 
-.hub-playful-mascot-img {
+.hub-mascot-img {
   display: block;
   width: 66px;
-  height: auto;
   min-width: 66px;
   max-width: 66px;
+  height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.1));
-  opacity: 0.95;
-}
-
-/* 落地静止期、靠右时：气泡在人物左侧，避免压住英文 slogan 区域 */
-.hub-playful-weather-bubble {
-  position: absolute;
-  right: calc(100% + 10px);
-  bottom: 72%;
-  margin: 0;
-  padding: 6px 9px;
-  max-width: 12rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.07);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-size: 10px;
-  line-height: 1.35;
-  color: var(--ink);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.55s ease;
-}
-
-.hub-playful-weather-bubble--visible {
-  opacity: 1;
-}
-
-/* ---------- 右下角：仅靠进右下角时浮现的安慰气泡（最高层，不挡呼吸按钮） ---------- */
-.corner-reassurance-layer {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-  width: min(220px, 42vw);
-  height: min(200px, 32vh);
-  pointer-events: none;
-  overflow: visible;
-}
-
-.corner-reassurance-bubble {
-  position: absolute;
-  right: max(1rem, env(safe-area-inset-right, 0px));
-  bottom: max(6.5rem, calc(env(safe-area-inset-bottom, 0px) + 6rem));
-  margin: 0;
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-size: 10px;
-  line-height: 1.3;
-  color: var(--ink);
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateY(4px);
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-  pointer-events: none;
-}
-
-.corner-reassurance-bubble--visible {
-  opacity: 1;
-  transform: translateY(0);
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
 }

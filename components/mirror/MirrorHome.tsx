@@ -38,10 +38,10 @@ import {
 } from "@/lib/mirror-quiz-autostart";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
+import { HubPlayfulMascot } from "./HubPlayfulMascot";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
-import { HubPlayfulMascot } from "./HubPlayfulMascot";
 
 type View = "hub" | "free" | "quick" | "random" | "result" | "quick-triple-report";
 
@@ -722,8 +722,10 @@ export function MirrorHome() {
             <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               We cannot control others. But we can see ourselves clearly.
             </p>
-            <HubPlayfulMascot />
-            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
+            <div className="hub-mascot-band relative z-[50] mx-auto mt-5 max-w-xl overflow-visible pointer-events-none">
+              <HubPlayfulMascot />
+            </div>
+            <div className="mx-auto mt-6 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
