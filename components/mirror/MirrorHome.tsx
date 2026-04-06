@@ -727,14 +727,14 @@ export function MirrorHome() {
       <main className="relative mx-auto w-full max-w-3xl flex-1 px-5 py-16 sm:px-6 sm:py-20">
         {view === "hub" && (
           <>
-            <p className="text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">mirror</p>
-            <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-              We cannot control others. But we can see ourselves clearly.
-            </p>
-            <div className="relative z-[50] mx-auto mt-5 max-w-xl overflow-visible pointer-events-none">
+            <div className="mirror-hub-slogan-hero relative z-[40] mx-auto mt-10 max-w-xl overflow-visible px-1">
               <EmotionalCompanion />
+              <p className="text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">mirror</p>
+              <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
+                We cannot control others. But we can see ourselves clearly.
+              </p>
             </div>
-            <div className="mx-auto mt-6 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
+            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
