@@ -3,6 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+const MASCOT_W = 40;
+const MASCOT_PAD = 6;
+
 const HUB_WHISPERS = [
   "听，是风的声音",
   "这一刻很轻。",
@@ -20,8 +23,23 @@ type Burst = { id: number; side: "left" | "right"; whisper: string };
 
 const ANCHOR = "[data-mirror-companion-anchor]";
 
+/** 无 translate：左上角 x */
+function clampLeftEdge(left: number, vw: number): number {
+  const lo = MASCOT_PAD;
+  const hi = Math.max(lo, vw - MASCOT_W - MASCOT_PAD);
+  return Math.round(Math.min(Math.max(left, lo), hi));
+}
+
+/** 配合 translateX(-50%)：夹紧中心点 x */
+function clampCenterX(cx: number, vw: number): number {
+  const half = MASCOT_W / 2;
+  const lo = half + MASCOT_PAD;
+  const hi = Math.max(lo, vw - half - MASCOT_PAD);
+  return Math.round(Math.min(Math.max(cx, lo), hi));
+}
+
 /**
- * 全局挂载：依锚点 fixed 定位（hub 标题行 / quiz 进度+题卡区）；pointer-events: none；z-index 见 globals。
+ * 全局 fixed：/prince.png 40px、opacity 0.8（见 CSS）、z-index 50、pointer-events: none。
  */
 export function EmotionalCompanion() {
   const pathname = usePathname();
@@ -32,6 +50,7 @@ export function EmotionalCompanion() {
   anchorRef.current = anchorEl;
   const [box, setBox] = useState<DOMRect | null>(null);
   const [burst, setBurst] = useState<Burst | null>(null);
+  const [vw, setVw] = useState(390);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -41,6 +60,13 @@ export function EmotionalCompanion() {
     mo.observe(document.body, { childList: true, subtree: true, attributes: true });
     return () => mo.disconnect();
   }, [pathname]);
+
+  useLayoutEffect(() => {
+    const w = () => setVw(typeof window !== "undefined" ? window.innerWidth : 390);
+    w();
+    window.addEventListener("resize", w);
+    return () => window.removeEventListener("resize", w);
+  }, []);
 
   useLayoutEffect(() => {
     if (!anchorEl) {
@@ -99,13 +125,14 @@ export function EmotionalCompanion() {
   let top: number;
 
   if (isQuiz) {
-    left = box.left - 6;
-    top = box.top - 54;
+    left = clampLeftEdge(box.left - 4, vw);
+    top = Math.max(MASCOT_PAD, box.top - 40);
     transform = "none";
   } else {
-    const offset = Math.min(56, box.width * 0.18);
-    left = burst.side === "left" ? centerX - offset : centerX + offset;
-    top = box.top - 58;
+    const offset = Math.min(38, box.width * 0.16);
+    const center = burst.side === "left" ? centerX - offset : centerX + offset;
+    left = clampCenterX(center, vw);
+    top = Math.max(MASCOT_PAD, box.top - 44);
     transform = "translateX(-50%)";
   }
 
@@ -120,13 +147,21 @@ export function EmotionalCompanion() {
           className="mirror-mascot-img"
           src="/prince.png"
           alt=""
-          width={60}
-          height={60}
+          width={MASCOT_W}
+          height={MASCOT_W}
           decoding="async"
           draggable={false}
         />
       </div>
-      <p className="mirror-mascot-whisper-bubble">{burst.whisper}</p>
+      <p
+        className={
+          isQuiz
+            ? "mirror-mascot-whisper-bubble mirror-mascot-whisper-bubble--quiz"
+            : "mirror-mascot-whisper-bubble"
+        }
+      >
+        {burst.whisper}
+      </p>
     </div>
   );
 }

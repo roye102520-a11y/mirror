@@ -12,7 +12,6 @@ import {
 } from "@/components/HabitTrackerGrid";
 import { EXAMPLE_REFLECTION_TEXTS } from "@/lib/example-reflection-texts";
 import { buildDailyReflectionStats } from "@/lib/reflection-history-store";
-import type { MoodHeatmapEntry } from "@/components/MoodHeatmapCalendar";
 import { useMemo } from "react";
 
 const PersonalWordCloud = dynamic(
@@ -39,9 +38,9 @@ export function ReflectionVisualsSection({
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
     const daily = buildDailyReflectionStats(35);
-    const moodData: MoodHeatmapEntry[] = daily
-      .filter((x) => x.count > 0 && x.mood != null)
-      .map((x) => ({ date: x.date, mood: x.mood as string }));
+    const moodData = daily
+      .filter((x) => x.count > 0 && x.mood)
+      .map((x) => ({ date: x.date, mood: x.mood }));
     const trendData: TrendLinePoint[] = daily
       .filter((x) => x.avgDepth !== null)
       .map((x) => ({ date: x.date, value: x.avgDepth as number }));

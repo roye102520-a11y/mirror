@@ -208,7 +208,7 @@ body::before {
 /* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
-  z-index: 10;
+  z-index: 55;
 }
 
 .mirror-brand-anchor {
@@ -251,15 +251,20 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  max-width: 100%;
   height: min(28vh, 9rem);
   z-index: 5;
   pointer-events: none;
   overflow: visible;
+  box-sizing: border-box;
   color: var(--accent);
 }
 
 .emotional-pulse-svg {
+  display: block;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   opacity: 0.14;
   transition: opacity 0.45s ease, color 0.45s ease;
@@ -282,8 +287,9 @@ body::before {
 
 .mirror-emotional-companion-global {
   position: fixed;
-  z-index: 100 !important;
-  width: 60px;
+  z-index: 50 !important;
+  width: 40px;
+  max-width: 40px;
   pointer-events: none;
   display: flex;
   flex-direction: column;
@@ -299,10 +305,11 @@ body::before {
 
 .mirror-mascot-img {
   display: block;
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
   height: auto;
+  opacity: 0.8;
   pointer-events: none;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -327,6 +334,14 @@ body::before {
   pointer-events: none;
   transform: translateX(-50%);
   animation: random-appearance-whisper 4.4s ease-in-out forwards;
+}
+
+/* 问卷页：单行提示，避免折行撑出横向滚动 */
+.mirror-mascot-whisper-bubble--quiz {
+  white-space: nowrap;
+  max-width: min(calc(100vw - 1.75rem), 20rem);
+  padding-inline: 6px;
+  font-size: 10px;
 }
 
 @keyframes random-appearance {

@@ -1,6 +1,5 @@
 "use client";
 
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { MirrorGuidanceBubbles } from "@/components/mirror/MirrorGuidanceBubbles";
 import { SiteHeader } from "@/components/SiteHeader";
 import { narrativeGuidance } from "@/lib/analyze-narrative";
@@ -37,17 +36,14 @@ export default function YourTextPage() {
             requestAnimationFrame(() => textareaRef.current?.focus());
           }}
         />
-        <div className="relative mt-4 overflow-visible">
-          <EmotionalCompanion />
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={10}
-            className="shadow-mirror relative z-0 mt-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
-            placeholder="在此粘贴或输入叙述……"
-          />
-        </div>
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={10}
+          className="shadow-mirror mt-4 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
+          placeholder="在此粘贴或输入叙述……"
+        />
         <p className="mt-6 text-sm leading-relaxed text-[var(--muted)]">{guidance}</p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <button

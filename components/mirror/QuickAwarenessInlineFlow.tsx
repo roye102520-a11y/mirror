@@ -9,14 +9,10 @@ import { answersSummaryForApi, emotionSnapshot, obsessionPoint } from "@/lib/qui
 import type { PhilosophyKey, QuickModuleId } from "@/lib/quick-awareness/types";
 import { MODULE_LABELS } from "@/lib/quick-awareness/types";
 import type { MirrorTone } from "@/lib/mirror-tone";
-import { ChatInput } from "@/components/ChatInput";
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
-import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { getStoredDeepseekKey } from "@/lib/settings-storage";
 import { useEffect, useRef, useState } from "react";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
-import { MirrorInputCompanionCluster } from "./MirrorInputCompanionCluster";
 
 const FALLBACK_REFLECTION =
   "若愿自问：此刻心里最紧的那一处，在什么条件下会值得被轻轻松开一点点？";
@@ -123,15 +119,9 @@ export function QuickAwarenessInlineFlow({
   const openTextareaRef = useRef<HTMLTextAreaElement>(null);
   textByIdRef.current = textById;
 
-  const [quickGentleLine, setQuickGentleLine] = useState(() => randomGentlePrompt());
-
   const questions = getQuestionsForModule(module);
   const q = questions[step];
   const total = questions.length;
-
-  useEffect(() => {
-    if (q?.kind === "text") setQuickGentleLine(randomGentlePrompt());
-  }, [q?.id, q?.kind]);
 
   useEffect(() => {
     setStep(0);
@@ -334,32 +324,21 @@ export function QuickAwarenessInlineFlow({
                     可选填写；点「完成并反思」生成报告，或「跳过」仅用前面选择题结果生成。
                   </p>
                 ) : null}
-                <MirrorInputCompanionCluster
-                  gentlePrompt={quickGentleLine}
-                  onGentlePick={(line) => {
-                    setOpenTextDraft((prev) => (prev.trim() ? `${prev}\n${line}` : line));
+                <MirrorGuidanceBubbles
+                  className="mt-3"
+                  onPick={(text) => {
+                    setOpenTextDraft(text);
                     requestAnimationFrame(() => openTextareaRef.current?.focus());
                   }}
-                >
-                  <MirrorGuidanceBubbles
-                    className="mt-0"
-                    onPick={(text) => {
-                      setOpenTextDraft(text);
-                      requestAnimationFrame(() => openTextareaRef.current?.focus());
-                    }}
-                  />
-                  <div className="relative mt-3 overflow-visible">
-                    <EmotionalCompanion />
-                    <ChatInput
-                      ref={openTextareaRef}
-                      value={openTextDraft}
-                      onChange={(e) => setOpenTextDraft(e.target.value)}
-                      rows={4}
-                      placeholder={q.placeholder}
-                      className="relative z-0 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-                    />
-                  </div>
-                </MirrorInputCompanionCluster>
+                />
+                <textarea
+                  ref={openTextareaRef}
+                  value={openTextDraft}
+                  onChange={(e) => setOpenTextDraft(e.target.value)}
+                  rows={4}
+                  placeholder={q.placeholder}
+                  className="mt-2 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+                />
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"

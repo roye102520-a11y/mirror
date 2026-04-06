@@ -1,6 +1,5 @@
 "use client";
 
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { buildContradictionExercise } from "@/lib/contradiction-exercise";
 import { useState } from "react";
 
@@ -42,16 +41,13 @@ export function ContradictionExercisePanel({ obsession }: { obsession: string })
       <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">{lead}</p>
       <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted)]">{instruction}</p>
       <label className="mt-5 block text-xs text-[var(--ink)]">{promptLabel}</label>
-      <div className="relative mt-2 overflow-visible">
-        <EmotionalCompanion />
-        <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          rows={5}
-          className="relative z-0 mt-0 w-full resize-y rounded-md border border-[var(--line)] bg-[var(--bg)] p-3 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-          placeholder="仅停留在此设备浏览器内存中，刷新即失；可自复制保存。"
-        />
-      </div>
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        rows={5}
+        className="mt-2 w-full resize-y rounded-md border border-[var(--line)] bg-[var(--bg)] p-3 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+        placeholder="仅停留在此设备浏览器内存中，刷新即失；可自复制保存。"
+      />
     </div>
   );
 }
