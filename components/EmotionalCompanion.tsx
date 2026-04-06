@@ -1,23 +1,19 @@
 "use client";
 
 /**
- * 小王子：紧贴 SiteHeader 内「mirror」品牌字，沿椭圆轨道运动。
- * 图片固定为 public/prince.png → URL /prince.png
+ * 蹲在输入框上方（父级须 position: relative; overflow: visible）。
+ * 图：/prince.png · 60px；样式见 app/globals.css .mascot-*
  */
 export function EmotionalCompanion() {
   return (
-    <div className="ec-arena" aria-hidden>
-      <div className="ec-orbit">
-        <div className="ec-bob">
-          <p className="ec-bubble">你也是一个人吗？</p>
-          <img
-            className="ec-img"
-            src="/prince.png"
-            alt=""
-            width={40}
-            decoding="async"
-            draggable={false}
-          />
+    <div className="mascot-container">
+      <div className="mascot-wrapper">
+        <p className="mascot-bubble">今天，想和我聊聊吗？</p>
+        <div className="mascot-row">
+          <span className="mascot-intro-text">今天，想和我聊聊你的内心世界吗？</span>
+          <div className="mascot-jump">
+            <img src="/prince.png" className="mascot-img" alt="小王子" width={60} height={60} decoding="async" draggable={false} />
+          </div>
         </div>
       </div>
     </div>

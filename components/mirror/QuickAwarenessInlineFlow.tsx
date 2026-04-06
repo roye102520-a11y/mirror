@@ -9,6 +9,7 @@ import { answersSummaryForApi, emotionSnapshot, obsessionPoint } from "@/lib/qui
 import type { PhilosophyKey, QuickModuleId } from "@/lib/quick-awareness/types";
 import { MODULE_LABELS } from "@/lib/quick-awareness/types";
 import type { MirrorTone } from "@/lib/mirror-tone";
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { getStoredDeepseekKey } from "@/lib/settings-storage";
 import { useEffect, useRef, useState } from "react";
@@ -331,14 +332,17 @@ export function QuickAwarenessInlineFlow({
                     requestAnimationFrame(() => openTextareaRef.current?.focus());
                   }}
                 />
-                <textarea
-                  ref={openTextareaRef}
-                  value={openTextDraft}
-                  onChange={(e) => setOpenTextDraft(e.target.value)}
-                  rows={4}
-                  placeholder={q.placeholder}
-                  className="mt-2 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-                />
+                <div className="relative mt-3 overflow-visible">
+                  <EmotionalCompanion />
+                  <textarea
+                    ref={openTextareaRef}
+                    value={openTextDraft}
+                    onChange={(e) => setOpenTextDraft(e.target.value)}
+                    rows={4}
+                    placeholder={q.placeholder}
+                    className="relative z-0 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+                  />
+                </div>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"

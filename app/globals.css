@@ -22,9 +22,14 @@
   --mirror-bg-b: #e6f0fc;
   --mirror-bg-c: #fcecf3;
   --mirror-bg-d: #ebe6f8;
+  /* 分析页 AnalysisExperience 别名（与 mirror 书写变量一致） */
+  --foreground: var(--ink);
+  --border: var(--line);
+  --border-strong: var(--accent);
+  --quote: var(--ink);
 }
 
-/* 避免横向溢出裁切；小王子仅在顶栏品牌区内运动 */
+/* 避免横向溢出裁切；输入区小王子见 .mascot-container */
 html {
   overflow-x: visible;
 }
@@ -184,179 +189,108 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 小王子 EmotionalCompanion：顶栏 mirror 旁椭圆轨道 ---------- */
+/* ---------- 顶栏 ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
 }
 
 .mirror-brand-anchor {
-  /* 椭圆半轴：水平约 50px，竖直略扁；窄屏自动缩小防出屏 */
-  --ec-rx: min(50px, max(28px, calc(50vw - 120px)));
-  --ec-ry: min(24px, max(12px, calc(0.45 * var(--ec-rx))));
   position: relative;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: calc(var(--ec-ry) + 12px) calc(var(--ec-rx) + 32px) calc(var(--ec-ry) + 10px) calc(var(--ec-rx) + 24px);
-  margin: calc(-1 * (var(--ec-ry) + 12px)) calc(-1 * (var(--ec-rx) + 32px)) calc(-1 * (var(--ec-ry) + 10px))
-    calc(-1 * (var(--ec-rx) + 24px));
+  gap: 0.35rem;
 }
 
-@media (max-width: 480px) {
-  .mirror-brand-anchor {
-    --ec-rx: min(40px, 30vw);
-    --ec-ry: min(16px, 14vw);
+/* ---------- EmotionalCompanion：输入框上方（父级 position: relative + overflow: visible） ---------- */
+@keyframes gentle-jump {
+  0%,
+  72%,
+  100% {
+    transform: translateY(0) rotate(0deg) scaleY(1);
+  }
+  78% {
+    transform: translateY(-15px) rotate(6deg) scaleY(1);
+  }
+  84% {
+    transform: translateY(-10px) rotate(-3deg) scaleY(1);
+  }
+  88% {
+    transform: translateY(3px) rotate(0deg) scaleY(0.9);
+  }
+  93% {
+    transform: translateY(0) rotate(0deg) scaleY(1);
   }
 }
 
-.mirror-brand-anchor:hover .ec-orbit,
-.mirror-brand-anchor:hover .ec-bob,
-.mirror-brand-anchor:hover .ec-img {
-  animation-play-state: paused;
-}
-
-.mirror-brand-anchor:hover .ec-bubble {
-  opacity: 1;
-}
-
-.ec-arena {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-}
-
-.ec-orbit {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  offset-rotate: 0deg;
-  animation: companion-orbit-fallback 12s ease-in-out infinite;
-}
-
-@supports (offset-path: ellipse(12px 8px at 0 0)) {
-  .ec-orbit {
-    offset-path: ellipse(var(--ec-rx) var(--ec-ry) at 0 0);
-    animation: companion-orbit 12s ease-in-out infinite;
-  }
-}
-
-.ec-bob {
-  position: absolute;
-  left: 0;
-  top: 0;
-  will-change: transform;
-  animation: companion-vertical-float 1s ease-in-out infinite;
-}
-
-/* 默认仅用 opacity 隐藏气泡，不用 visibility/display，避免误挡小王子 */
-.ec-bubble {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 5px 8px;
-  max-width: 12rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(230, 228, 220, 0.95);
-  box-shadow: 0 2px 10px rgba(42, 42, 42, 0.08);
-  font-size: 11px;
-  line-height: 1.35;
-  color: var(--ink);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 50;
-}
-
-.ec-img {
-  display: block;
-  width: 40px;
-  height: auto;
-  position: relative;
-  z-index: 1;
-  pointer-events: auto;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  transform-origin: center bottom;
-  animation: companion-orbit-depth 12s ease-in-out infinite;
-}
-
-/* 前半圈：在字前（高于 .mirror-brand-link 的 z-30）；后半圈：在字后 */
-@keyframes companion-orbit {
+@keyframes mascot-intro-typewriter {
   0% {
-    offset-distance: 0%;
-    z-index: 40;
-  }
-  49.9% {
-    offset-distance: 49.9%;
-    z-index: 40;
-  }
-  50% {
-    offset-distance: 50%;
-    z-index: 5;
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.65;
   }
   100% {
-    offset-distance: 100%;
-    z-index: 5;
-  }
-}
-
-@keyframes companion-orbit-depth {
-  0%,
-  49.9% {
+    clip-path: inset(0 0 0 0);
     opacity: 1;
   }
-  50%,
-  100% {
-    opacity: 0.5;
-  }
 }
 
-@keyframes companion-vertical-float {
-  0%,
-  100% {
-    transform: translate(-50%, calc(-50% + 2px));
-  }
-  50% {
-    transform: translate(-50%, calc(-50% - 2px));
-  }
+.mascot-container {
+  position: absolute !important;
+  bottom: 100% !important;
+  left: 20px !important;
+  z-index: 9999 !important;
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  padding-bottom: 20px;
+  max-width: min(100vw - 2rem, 22rem);
 }
 
-@keyframes companion-orbit-fallback {
-  0% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
-    z-index: 40;
-  }
-  25% {
-    transform: translate(-50%, -50%) translateY(calc(-1 * var(--ec-ry)));
-    z-index: 40;
-  }
-  49.9% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--ec-rx)));
-    z-index: 40;
-  }
-  50% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--ec-rx)));
-    z-index: 5;
-  }
-  75% {
-    transform: translate(-50%, -50%) translateY(var(--ec-ry));
-    z-index: 5;
-  }
-  99.9% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
-    z-index: 5;
-  }
-  100% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
-    z-index: 40;
-  }
+.mascot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.mascot-bubble {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.mascot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 0.75rem;
+}
+
+.mascot-intro-text {
+  flex: 1 1 8rem;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+  animation: mascot-intro-typewriter 2.2s steps(28, end) 0.15s both;
+}
+
+.mascot-jump {
+  flex-shrink: 0;
+  transform-origin: center bottom;
+  animation: gentle-jump 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.mascot-img {
+  display: block !important;
+  visibility: visible !important;
+  width: 60px;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
 }
