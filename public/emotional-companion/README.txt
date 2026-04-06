@@ -1,9 +1,9 @@
-情感伙伴 · 占位说明
+情感伙伴 · 说明
 ============================
 
-小王子由 EmotionalCompanion 渲染（图片：/prince.png，宽 66px），挂在首页 hub 英文标语
-与「完整扫描」卡片之间；动效见 app/globals.css 中 playful-jump-*。
+小王子由首页 mirror hub 的 SloganPrince 渲染（静态资源：/prince.png，宽 66px），
+置于英文标语附近，与呼吸圆圈共用 8s 呼吸缩放节奏。
 
-右下角 CalmCornerWidget 仅保留呼吸圈与疗愈时空，不含小王子。
+右下角 CalmCornerWidget 仅保留呼吸圈与疗愈时空；靠近右下角时可看到安抚气泡。
 
 本目录可忽略。

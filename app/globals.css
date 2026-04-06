@@ -71,7 +71,7 @@ body::before {
   }
 }
 
-/* 右下角呼吸圈：吸气 4s → 呼气 4s（ease-in-out / 8s） */
+/* 右下角呼吸圈：吸气 4s → 呼气 4s，与小王子缩放共用节奏（ease-in-out / 8s） */
 @keyframes calm-breathe {
   0% {
     transform: scale(1);
@@ -87,8 +87,22 @@ body::before {
   }
 }
 
+@keyframes calm-breathe-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
 .animate-calm-breathe {
   animation: calm-breathe 8s ease-in-out infinite;
+}
+
+.animate-calm-breathe-mascot {
+  animation: calm-breathe-scale 8s ease-in-out infinite;
 }
 
 .shadow-mirror {
@@ -184,162 +198,120 @@ body::before {
   align-items: center;
 }
 
-/* ---------- EmotionalCompanion：首页 hub 抛物跳跃 + 静止期气泡 ---------- */
-.mirror-hub-mascot-wrap {
-  position: relative;
-  z-index: 1;
-}
-
-/**
- * 15s 周期：0–10s 静坐左侧；10–11.5s 跳到右侧；11.5–13.5s 右侧静止；13.5–15s 跳回左侧。
- * 位移在 hop，挤压在 img，气泡随 hop 平移、不受 scale。
- */
-@keyframes playful-jump-move {
-  0%,
-  66.6667% {
-    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
-  }
-  67.5% {
-    transform: translate3d(calc(-0.78 * var(--mascot-jump-dx)), -12px, 0);
-  }
-  70% {
-    transform: translate3d(calc(-0.32 * var(--mascot-jump-dx)), -40px, 0);
-  }
-  73.5% {
-    transform: translate3d(calc(0.38 * var(--mascot-jump-dx)), -20px, 0);
-  }
-  76.6667% {
-    transform: translate3d(var(--mascot-jump-dx), 0, 0);
-  }
-  90% {
-    transform: translate3d(var(--mascot-jump-dx), 0, 0);
-  }
-  90.8% {
-    transform: translate3d(calc(0.82 * var(--mascot-jump-dx)), -10px, 0);
-  }
-  93.2% {
-    transform: translate3d(calc(0.28 * var(--mascot-jump-dx)), -38px, 0);
-  }
-  95.8% {
-    transform: translate3d(calc(-0.48 * var(--mascot-jump-dx)), -16px, 0);
-  }
-  98.2% {
-    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
-  }
-  100% {
-    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
-  }
-}
-
-@keyframes playful-jump-squash {
-  0%,
-  66.6667% {
-    transform: scale(1, 1);
-  }
-  70% {
-    transform: scale(0.88, 0.88);
-  }
-  76.6667% {
-    transform: scale(1.12, 0.76);
-  }
-  77.8%,
-  90% {
-    transform: scale(1, 1);
-  }
-  93.2% {
-    transform: scale(0.88, 0.88);
-  }
-  98.2% {
-    transform: scale(1.1, 0.78);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
-}
-
-.mascot-playful-hit {
-  pointer-events: auto;
-  position: relative;
-  display: inline-block;
-  padding: 10px 20px 6px;
+/* ---------- 右下角：靠近时出现安抚气泡（仅文案；小王子在首页标语文案旁） ---------- */
+.calm-corner-fear-bubble {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
   margin: 0;
+  padding: 3px 6px;
+  max-width: 9rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 2px 10px rgba(42, 42, 42, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 9px;
+  line-height: 1.25;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
 }
 
-.mascot-playful-stage {
-  --mascot-jump-dx: clamp(2.5rem, 12vw, 4.5rem);
-  position: relative;
+.calm-corner-fear-bubble--visible {
+  opacity: 1;
+}
+
+/* ---------- 首页标语旁：小王子灵动跳跃（15s 周期：10s 坐 + 5s 跳跃往返），容器 overflow-visible ---------- */
+.mirror-slogan-anchor {
+  overflow: visible !important;
+}
+
+@keyframes playful-jump {
+  0%,
+  66.6667% {
+    transform: translate3d(-72px, 4px, 0);
+  }
+  71.6667% {
+    transform: translate3d(0, -38px, 0);
+  }
+  76.6667%,
+  90% {
+    transform: translate3d(72px, 4px, 0);
+  }
+  95% {
+    transform: translate3d(0, -38px, 0);
+  }
+  100% {
+    transform: translate3d(-72px, 4px, 0);
+  }
+}
+
+.mirror-slogan-prince-stage {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 0;
   overflow: visible;
-  min-height: 2.75rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding-left: clamp(0.25rem, 6vw, 1.75rem);
   pointer-events: none;
 }
 
-.mascot-playful-hop {
-  position: relative;
-  z-index: 50;
-  display: inline-block;
-  transform-origin: 50% 100%;
-  pointer-events: none;
-  animation: playful-jump-move 15s linear infinite;
+.mirror-slogan-prince-jump {
+  animation: playful-jump 15s linear infinite;
+  transform-origin: center bottom;
   will-change: transform;
+  opacity: 0.7;
 }
 
-.mascot-playful-img {
+.mirror-slogan-prince-glass {
+  border-radius: 12px;
+  padding: 6px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
+  transform-origin: center center;
+}
+
+.mirror-slogan-prince-img {
   display: block;
   width: 66px;
   min-width: 66px;
   max-width: 66px;
   height: auto;
-  pointer-events: none;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
-  transform-origin: 50% 100%;
-  animation: playful-jump-squash 15s linear infinite;
 }
 
-.mascot-playful-bubble {
+.mirror-slogan-prince-bubble {
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 6px);
-  translate: -50% 0;
+  bottom: calc(100% - 0.25rem);
   margin: 0;
   padding: 5px 8px;
-  max-width: 11rem;
+  max-width: 14rem;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.08);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-size: 10px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 11px;
   line-height: 1.35;
   color: var(--ink);
-  white-space: nowrap;
+  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.9s ease;
-  z-index: 51;
+  transition: opacity 1.15s ease;
+  white-space: nowrap;
 }
 
-.mascot-playful-bubble--visible {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mascot-playful-hop,
-  .mascot-playful-img {
-    animation: none !important;
-  }
-
-  .mascot-playful-hop {
-    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
-  }
-
-  .mascot-playful-img {
-    transform: none;
-  }
+.mirror-slogan-prince-bubble--visible {
+  opacity: 0.92;
 }

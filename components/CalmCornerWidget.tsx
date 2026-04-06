@@ -18,6 +18,7 @@ const GRADIENT_TRANSITION_MS = 10_000;
 export function CalmCornerWidget() {
   const [scene, setScene] = useState<HealingSceneId>("off");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cornerHovered, setCornerHovered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cancelGradientRef = useRef<(() => void) | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -88,29 +89,40 @@ export function CalmCornerWidget() {
 
   return (
     <div
-      className="pointer-events-none fixed right-0 isolate z-[35] overflow-visible p-3 sm:p-4"
+      className="pointer-events-none fixed right-0 isolate z-[9999] overflow-visible p-3 sm:p-4"
       data-mirror-calm-corner=""
       style={{
         bottom: "max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem))",
         paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
       }}
     >
-      <div className="pointer-events-auto flex flex-col items-end gap-3 overflow-visible">
-        <div
-          className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
-          role="region"
-          aria-label="呼吸练习示意"
-        >
-          <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
-            <div
-              className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
-              style={{ width: "56px", height: "56px" }}
-              aria-hidden
-            />
+      <div
+        className="pointer-events-auto flex flex-col items-end gap-3 overflow-visible"
+        onMouseEnter={() => setCornerHovered(true)}
+        onMouseLeave={() => setCornerHovered(false)}
+      >
+        <div className="flex max-w-[min(100%,calc(100vw-1.25rem))] flex-row items-end justify-end gap-2 overflow-visible">
+          <div
+            className="pointer-events-none relative flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
+            role="region"
+            aria-label="呼吸练习示意"
+          >
+            <p
+              className={`calm-corner-fear-bubble${cornerHovered ? " calm-corner-fear-bubble--visible" : ""}`}
+            >
+              别怕，我在。
+            </p>
+            <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
+              <div
+                className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
+                style={{ width: "56px", height: "56px" }}
+                aria-hidden
+              />
+            </div>
+            <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
+              跟着圆圈呼气吸气
+            </p>
           </div>
-          <p className="text-center text-[10px] leading-snug text-[var(--muted)] sm:text-xs">
-            跟着圆圈呼气吸气
-          </p>
         </div>
 
         <div ref={menuRef} className="relative">
