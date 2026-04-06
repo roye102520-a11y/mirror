@@ -187,10 +187,10 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
+/* ---------- 顶栏品牌：高于首页小王子 (z-50)，保证 Mirror 可点 ---------- */
 .mirror-site-header {
   position: relative;
-  z-index: 10;
+  z-index: 60;
 }
 
 .mirror-brand-anchor {
@@ -198,62 +198,101 @@ body::before {
   align-items: center;
 }
 
-/* ---------- 右下角疗愈区：别怕我在气泡（小王子的像素图已迁至 hub） ---------- */
-.corner-comfort-slot {
+/* ---------- 首页 hub：小王子抛物跳跃（15s）+ 与呼吸圈同节奏缩放 ---------- */
+@keyframes playful-jump {
+  0%,
+  66.666% {
+    left: 12%;
+    bottom: 0;
+  }
+  70% {
+    left: 50%;
+    bottom: 56px;
+  }
+  73.333% {
+    left: 84%;
+    bottom: 0;
+  }
+  73.333%,
+  86.666% {
+    left: 84%;
+    bottom: 0;
+  }
+  90% {
+    left: 50%;
+    bottom: 38px;
+  }
+  100% {
+    left: 12%;
+    bottom: 0;
+  }
+}
+
+.hub-playful-mascot-root {
   position: relative;
-  flex-shrink: 0;
-}
-
-.corner-comfort-bubble {
-  position: absolute;
-  right: calc(100% + 0.35rem);
-  bottom: 50%;
-  transform: translateY(50%);
-  margin: 0;
-  padding: 4px 7px;
-  max-width: 10rem;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.06);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-size: 10px;
-  line-height: 1.3;
-  z-index: 9999;
-  color: var(--ink);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.45s ease;
-}
-
-.corner-comfort-bubble--visible {
-  opacity: 1;
-}
-
-/* ---------- 首页 hub：小王子倚第一卡顶框，抛物跳跃 + 与呼吸同频 8s 缩放 ---------- */
-.hub-playful-root {
-  --hub-mascot-dx: min(7.25rem, 34vw);
-  --hub-mascot-arc: -2.5rem;
-  left: clamp(0.25rem, 5vw, 1.5rem);
-  bottom: calc(100% - 33px);
-  width: 66px;
-  height: 66px;
   z-index: 50;
   opacity: 0.7;
+  pointer-events: none;
 }
 
+.hub-playful-mascot-rail {
+  min-height: 5.25rem;
+  pointer-events: auto;
+}
+
+.hub-playful-mascot-jumper {
+  position: absolute;
+  bottom: 0;
+  left: 12%;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  animation: playful-jump 15s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+  pointer-events: none;
+}
+
+.hub-playful-mascot-jumper-inner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-50%);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hub-playful-mascot-glass {
+  border-radius: 12px;
+  padding: 5px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.07);
+  transform-origin: center center;
+}
+
+.hub-playful-mascot-img {
+  display: block;
+  width: 66px;
+  height: auto;
+  min-width: 66px;
+  max-width: 66px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.1));
+  opacity: 0.95;
+}
+
+/* 落地静止期、靠右时：气泡在人物左侧，避免压住英文 slogan 区域 */
 .hub-playful-weather-bubble {
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 8px);
-  transform: translateX(-50%);
+  right: calc(100% + 10px);
+  bottom: 72%;
   margin: 0;
-  padding: 5px 9px;
-  max-width: 14rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.76);
+  padding: 6px 9px;
+  max-width: 12rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 2px 14px rgba(42, 42, 42, 0.07);
   backdrop-filter: blur(12px);
@@ -264,64 +303,50 @@ body::before {
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.85s ease;
+  transition: opacity 0.55s ease;
 }
 
 .hub-playful-weather-bubble--visible {
   opacity: 1;
 }
 
-.hub-playful-track {
-  position: relative;
-  width: 66px;
-  height: 66px;
-  transform-origin: center center;
-  will-change: transform;
+/* ---------- 右下角：仅靠进右下角时浮现的安慰气泡（最高层，不挡呼吸按钮） ---------- */
+.corner-reassurance-layer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  width: min(220px, 42vw);
+  height: min(200px, 32vh);
+  pointer-events: none;
+  overflow: visible;
 }
 
-/* 15s：0–66.667% 静坐左 10s；66.667–76.667% 右跳 1.5s；76.667–90% 右侧停 2s；90–100% 回左 1.5s */
-@keyframes playful-jump {
-  0%,
-  66.6667% {
-    transform: translate3d(0, 0, 0);
-  }
-  71.6667% {
-    transform: translate3d(calc(var(--hub-mascot-dx) * 0.5), var(--hub-mascot-arc), 0);
-  }
-  76.6667%,
-  90% {
-    transform: translate3d(var(--hub-mascot-dx), 0, 0);
-  }
-  95% {
-    transform: translate3d(calc(var(--hub-mascot-dx) * 0.5), var(--hub-mascot-arc), 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.animate-playful-jump {
-  animation: playful-jump 15s linear infinite;
-}
-
-.hub-playful-glass {
-  border-radius: 14px;
-  padding: 7px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+.corner-reassurance-bubble {
+  position: absolute;
+  right: max(1rem, env(safe-area-inset-right, 0px));
+  bottom: max(6.5rem, calc(env(safe-area-inset-bottom, 0px) + 6rem));
+  margin: 0;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
-  transform-origin: center center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+  pointer-events: none;
 }
 
-.hub-playful-img {
-  display: block;
-  width: 66px;
-  min-width: 66px;
-  max-width: 66px;
-  height: auto;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
+.corner-reassurance-bubble--visible {
+  opacity: 1;
+  transform: translateY(0);
 }
