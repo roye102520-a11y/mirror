@@ -728,8 +728,12 @@ export function MirrorHome() {
         {view === "hub" && (
           <>
             <div className="mirror-hub-slogan-hero relative z-[40] mx-auto mt-10 max-w-xl overflow-visible px-1">
-              <EmotionalCompanion />
-              <p className="text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">mirror</p>
+              <div className="mirror-hub-title-row relative z-10 mx-auto flex min-h-[5.5rem] flex-col items-center justify-end pt-4">
+                <EmotionalCompanion />
+                <p className="relative z-20 text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">
+                  mirror
+                </p>
+              </div>
               <p className="mt-10 text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
                 We cannot control others. But we can see ourselves clearly.
               </p>
