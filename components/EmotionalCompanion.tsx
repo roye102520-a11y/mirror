@@ -1,20 +1,13 @@
 "use client";
 
-type Props = {
-  /** 递增时重播 1.5s 抛物跳跃；0 为静默蹲守 */
-  jumpNonce: number;
-};
-
 /**
- * 小王子：蹲在引导卡边缘，仅响应输入 focus/打字；pointer-events 全关。
+ * 蹲在输入框上方（由父级 position: relative 定位）。
+ * 图：/prince.png · 60px · pointer-events: none（见 globals .emotional-companion-root）
  */
-export function EmotionalCompanion({ jumpNonce }: Props) {
+export function EmotionalCompanion() {
   return (
     <div className="emotional-companion-root" aria-hidden>
-      <div
-        key={jumpNonce}
-        className={["emotional-companion-hop", jumpNonce > 0 ? "emotional-companion-hop--jumping" : ""].join(" ")}
-      >
+      <div className="emotional-companion-float-jump-inner">
         <img
           className="emotional-companion-img"
           src="/prince.png"

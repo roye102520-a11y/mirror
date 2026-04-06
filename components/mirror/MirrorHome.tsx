@@ -36,9 +36,9 @@ import {
   readStoredMirrorAutoStartQuiz,
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
-import { useMirrorCompanionJump } from "@/lib/use-mirror-companion-jump";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
 import { MirrorInputCompanionCluster } from "./MirrorInputCompanionCluster";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
@@ -132,16 +132,6 @@ export function MirrorHome() {
   const freeTextareaRef = useRef<HTMLTextAreaElement>(null);
   const randomTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const {
-    jumpNonce: freeJumpNonce,
-    bumpOnFocus: bumpFreeCompanionFocus,
-    bumpOnInput: bumpFreeCompanionInput,
-  } = useMirrorCompanionJump();
-  const {
-    jumpNonce: randomJumpNonce,
-    bumpOnFocus: bumpRandomCompanionFocus,
-    bumpOnInput: bumpRandomCompanionInput,
-  } = useMirrorCompanionJump();
   const [freeGentleLine, setFreeGentleLine] = useState(() => randomGentlePrompt());
   const [randomGentleLine, setRandomGentleLine] = useState(() => randomGentlePrompt());
 
@@ -854,10 +844,8 @@ export function MirrorHome() {
             </div>
             <MirrorInputCompanionCluster
               gentlePrompt={freeGentleLine}
-              jumpNonce={freeJumpNonce}
               onGentlePick={(line) => {
                 setFreeText((prev) => (prev.trim() ? `${prev}\n${line}` : line));
-                bumpFreeCompanionFocus();
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
             >
@@ -865,22 +853,20 @@ export function MirrorHome() {
                 className="mt-0"
                 onPick={(text) => {
                   setFreeText(text);
-                  bumpFreeCompanionFocus();
                   requestAnimationFrame(() => freeTextareaRef.current?.focus());
                 }}
               />
-              <textarea
-                ref={freeTextareaRef}
-                value={freeText}
-                onFocus={bumpFreeCompanionFocus}
-                onChange={(e) => {
-                  setFreeText(e.target.value);
-                  bumpFreeCompanionInput();
-                }}
-                rows={12}
-                className="shadow-mirror mt-3 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-                placeholder="写什么都可以。无需完整，只要对你真实。"
-              />
+              <div className="relative mt-3 overflow-visible">
+                <EmotionalCompanion />
+                <textarea
+                  ref={freeTextareaRef}
+                  value={freeText}
+                  onChange={(e) => setFreeText(e.target.value)}
+                  rows={12}
+                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                  placeholder="写什么都可以。无需完整，只要对你真实。"
+                />
+              </div>
             </MirrorInputCompanionCluster>
             <button
               type="button"
@@ -1022,10 +1008,8 @@ export function MirrorHome() {
             <label className="block text-xs text-[var(--muted)]">写下你的思考（可选）</label>
             <MirrorInputCompanionCluster
               gentlePrompt={randomGentleLine}
-              jumpNonce={randomJumpNonce}
               onGentlePick={(line) => {
                 setRandomReply((prev) => (prev.trim() ? `${prev}\n${line}` : line));
-                bumpRandomCompanionFocus();
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
             >
@@ -1033,21 +1017,19 @@ export function MirrorHome() {
                 className="mt-0"
                 onPick={(text) => {
                   setRandomReply(text);
-                  bumpRandomCompanionFocus();
                   requestAnimationFrame(() => randomTextareaRef.current?.focus());
                 }}
               />
-              <textarea
-                ref={randomTextareaRef}
-                value={randomReply}
-                onFocus={bumpRandomCompanionFocus}
-                onChange={(e) => {
-                  setRandomReply(e.target.value);
-                  bumpRandomCompanionInput();
-                }}
-                rows={8}
-                className="shadow-mirror mt-3 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-              />
+              <div className="relative mt-3 overflow-visible">
+                <EmotionalCompanion />
+                <textarea
+                  ref={randomTextareaRef}
+                  value={randomReply}
+                  onChange={(e) => setRandomReply(e.target.value)}
+                  rows={8}
+                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                />
+              </div>
             </MirrorInputCompanionCluster>
             <button
               type="button"

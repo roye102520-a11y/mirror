@@ -227,21 +227,43 @@ body::before {
   opacity: 1;
 }
 
-/* 输入区小王子：focus / 打字触发的轻抛物线 + 落地压扁（1.5s ease-in-out） */
-@keyframes playful-jump {
-  0% {
+/* 输入框上的小王子：10s 周期，前段缓慢浮动，末段弧线跳一次 */
+@keyframes float-and-jump {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0) scaleY(1);
   }
-  38% {
-    transform: translate3d(5px, -10px, 0) scaleY(1);
+  8% {
+    transform: translate3d(0, -4px, 0) scaleY(1);
+  }
+  18% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+  28% {
+    transform: translate3d(0, -5px, 0) scaleY(1);
+  }
+  40% {
+    transform: translate3d(0, -2px, 0) scaleY(1);
+  }
+  52% {
+    transform: translate3d(0, -6px, 0) scaleY(1);
+  }
+  64% {
+    transform: translate3d(0, 0, 0) scaleY(1);
   }
   72% {
-    transform: translate3d(5px, 0, 0) scaleY(1);
+    transform: translate3d(0, -3px, 0) scaleY(1);
   }
-  84% {
-    transform: translate3d(2px, 0, 0) scaleY(0.9);
+  80% {
+    transform: translate3d(0, 0, 0) scaleY(1);
   }
-  100% {
+  87% {
+    transform: translate3d(10px, -18px, 0) scaleY(1);
+  }
+  92% {
+    transform: translate3d(5px, 1px, 0) scaleY(0.9);
+  }
+  97% {
     transform: translate3d(0, 0, 0) scaleY(1);
   }
 }
@@ -251,22 +273,19 @@ body::before {
 }
 
 .emotional-companion-root {
-  position: absolute;
-  left: -0.125rem;
-  bottom: 0.2rem;
-  z-index: 2;
+  position: absolute !important;
+  bottom: calc(100% + 10px) !important;
+  left: 0 !important;
+  z-index: 999 !important;
   width: 60px;
-  pointer-events: none;
+  pointer-events: none !important;
   opacity: 0.7;
-  transform: translateX(-14%);
 }
 
-.emotional-companion-hop {
+.emotional-companion-float-jump-inner {
   transform-origin: center bottom;
-}
-
-.emotional-companion-hop--jumping {
-  animation: playful-jump 1.5s ease-in-out both;
+  animation: float-and-jump 10s ease-in-out infinite;
+  will-change: transform;
 }
 
 .emotional-companion-img {
