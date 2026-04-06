@@ -732,7 +732,7 @@ export function MirrorHome() {
               We cannot control others. But we can see ourselves clearly.
             </p>
             <div className="relative z-[50] mx-auto mt-5 max-w-xl overflow-visible pointer-events-none">
-              <EmotionalCompanion variant="hub" active={false} />
+              <EmotionalCompanion />
             </div>
             <div className="mx-auto mt-6 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
