@@ -17,6 +17,11 @@
   --accent: #5c5c5c;
   /* 轻微立体阴影：卡片 / 气泡 / 按钮共用 */
   --shadow-mirror: 0 3px 14px rgba(42, 42, 42, 0.09), 0 1px 4px rgba(42, 42, 42, 0.07);
+  /* 疗愈时空背景渐变（由 JS 在 10s 内平滑插值切换；初始为默认淡彩） */
+  --mirror-bg-a: #efe8f7;
+  --mirror-bg-b: #e6f0fc;
+  --mirror-bg-c: #fcecf3;
+  --mirror-bg-d: #ebe6f8;
 }
 
 body {
@@ -25,7 +30,7 @@ body {
   min-height: 100vh;
 }
 
-/* 极缓慢的流体渐变背景（约 20s 周期），淡紫 / 淡蓝 / 淡粉 */
+/* 流体渐变背景：色值由 --mirror-bg-* 决定（疗愈时空切换时平滑变色），位置仍缓慢游移 */
 body::before {
   content: "";
   position: fixed;
@@ -33,13 +38,21 @@ body::before {
   z-index: -1;
   background: linear-gradient(
     125deg,
-    #efe8f7 0%,
-    #e6f0fc 35%,
-    #fcecf3 65%,
-    #ebe6f8 100%
+    var(--mirror-bg-a) 0%,
+    var(--mirror-bg-b) 35%,
+    var(--mirror-bg-c) 65%,
+    var(--mirror-bg-d) 100%
   );
   background-size: 300% 300%;
   animation: mirror-gradient-flow 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 疗愈时空：毛玻璃菜单（仅样式层，不影响主内容与输入框层级） */
+.mirror-healing-menu {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.42);
 }
 
 @keyframes mirror-gradient-flow {
@@ -163,4 +176,81 @@ body::before {
   box-shadow:
     0 8px 40px rgba(120, 100, 160, 0.08),
     var(--shadow-mirror);
+}
+
+/* ---------- 情感伙伴（小王子 & 狐狸像素画占位）----------
+ * 图片：public/emotional-companion/prince-fox.png（见 EmotionalCompanion.tsx）
+ * 不响应指针，避免挡住输入；z-index 低于右下角疗愈/静心层
+ */
+.emotional-companion-host {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 22;
+  height: 48px;
+  bottom: max(4.75rem, calc(env(safe-area-inset-bottom, 0px) + 4rem));
+  overflow: visible;
+}
+
+.emotional-companion-actor {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 48px;
+  height: 48px;
+  transform-origin: center bottom;
+  will-change: transform;
+  /* 45s 整段循环：横穿 → 牵手微动 → 回左侧再起 */
+  animation: emotional-companion-cycle 45s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.emotional-companion-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  opacity: 0.8;
+  display: block;
+  /* 像素画锐化 */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/**
+ * 时间轴（百分比基于 45s）：
+ * 0–62% 自屏左外平滑移至右侧
+ * 62–72% 「牵手」：轻微靠拢 + scale 脉冲
+ * 72–76% 右侧停驻
+ * 76–77% 无透明硬切回起点（移动端用 translate3d 触发合成层）
+ * 77–100% 左侧稍作停顿后下一圈继续
+ */
+@keyframes emotional-companion-cycle {
+  0% {
+    transform: translate3d(-56px, 0, 0) scale(1);
+  }
+  62% {
+    transform: translate3d(calc(100vw - 48px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1);
+  }
+  /* 牵手：两次极轻 pulse */
+  65% {
+    transform: translate3d(calc(100vw - 52px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1.06);
+  }
+  68% {
+    transform: translate3d(calc(100vw - 48px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1);
+  }
+  70% {
+    transform: translate3d(calc(100vw - 50px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1.05);
+  }
+  72% {
+    transform: translate3d(calc(100vw - 48px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1);
+  }
+  76% {
+    transform: translate3d(calc(100vw - 48px - max(12px, env(safe-area-inset-right, 0px))), 0, 0) scale(1);
+  }
+  76.5% {
+    transform: translate3d(-56px, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-56px, 0, 0) scale(1);
+  }
 }

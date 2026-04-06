@@ -1,27 +1,33 @@
 "use client";
 
 /**
- * 右下角：呼吸圈圈（纯 CSS 动画）+ 雨声白噪音开关。
- * 位置抬高并避开安全区，减少对底部说明条与常见输入区的遮挡。
- *
- * 雨声：Mixkit 免版税素材（可商用），若链接失效可换 MIXKIT_RAIN_AUDIO_URL。
- * 许可：https://mixkit.co/license/
+ * 右下角：呼吸圈圈 + 「疗愈时空」环境音与背景渐变联动。
+ * 音频许可见 lib/healing-space-scenes.ts
  */
+import {
+  HEALING_SCENE_ORDER,
+  HEALING_SCENES,
+  type HealingSceneId,
+  animateGradientTo,
+  gradientForScene,
+} from "@/lib/healing-space-scenes";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/** Mixkit 「Light rain loop」预览片段，循环播放作雨声背景 */
-const MIXKIT_RAIN_AUDIO_URL =
-  "https://assets.mixkit.co/active_storage/sfx/2393/2393-preview.mp3";
+const GRADIENT_TRANSITION_MS = 10_000;
 
 export function CalmCornerWidget() {
+  const [scene, setScene] = useState<HealingSceneId>("off");
+  const [menuOpen, setMenuOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [rainOn, setRainOn] = useState(false);
+  const cancelGradientRef = useRef<(() => void) | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const skipFirstGradient = useRef(true);
+  const audioSceneRef = useRef<HealingSceneId>("off");
 
   useEffect(() => {
-    const a = new Audio(MIXKIT_RAIN_AUDIO_URL);
+    const a = new Audio();
     a.loop = true;
     a.preload = "auto";
-    a.volume = 0.35;
     audioRef.current = a;
     return () => {
       a.pause();
@@ -29,21 +35,56 @@ export function CalmCornerWidget() {
     };
   }, []);
 
-  const toggleRain = useCallback(async () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (rainOn) {
-      a.pause();
-      setRainOn(false);
+  useEffect(() => {
+    if (skipFirstGradient.current) {
+      skipFirstGradient.current = false;
       return;
     }
-    try {
-      await a.play();
-      setRainOn(true);
-    } catch {
-      setRainOn(false);
+    cancelGradientRef.current?.();
+    cancelGradientRef.current = animateGradientTo(gradientForScene(scene), GRADIENT_TRANSITION_MS);
+    return () => cancelGradientRef.current?.();
+  }, [scene]);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (scene === "off") {
+      a.pause();
+      audioSceneRef.current = "off";
+      return;
     }
-  }, [rainOn]);
+    const cfg = HEALING_SCENES[scene];
+    if (audioSceneRef.current !== scene) {
+      a.pause();
+      a.src = cfg.audioUrl;
+      a.load();
+      audioSceneRef.current = scene;
+    }
+    a.volume = cfg.volume;
+    void a.play().catch(() => {});
+  }, [scene]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      const el = menuRef.current;
+      if (el && !el.contains(e.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  const pickScene = useCallback((id: HealingSceneId) => {
+    setScene(id);
+    setMenuOpen(false);
+  }, []);
 
   return (
     <div
@@ -53,7 +94,6 @@ export function CalmCornerWidget() {
         paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
       }}
     >
-      {/* 呼吸训练：非交互，仅占位视觉 */}
       <div
         className="pointer-events-none flex w-[5.5rem] flex-col items-center gap-1.5 sm:w-24"
         role="region"
@@ -71,42 +111,79 @@ export function CalmCornerWidget() {
         </p>
       </div>
 
-      {/* 雨声：可点击，触控区域 ≥ 44px */}
-      <div className="pointer-events-auto">
+      <div ref={menuRef} className="pointer-events-auto relative">
+        {menuOpen ? (
+          <div
+            className="mirror-healing-menu absolute bottom-full right-0 z-10 mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
+            role="menu"
+            aria-label="疗愈时空场景"
+          >
+            {HEALING_SCENE_ORDER.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="menuitem"
+                onClick={() => pickScene(key)}
+                className={[
+                  "mirror-no-hover block w-full px-3 py-2.5 text-left text-xs transition-colors",
+                  scene === key
+                    ? "bg-white/55 font-medium text-[var(--ink)]"
+                    : "bg-transparent text-[var(--ink)] hover:bg-white/40",
+                ].join(" ")}
+              >
+                {HEALING_SCENES[key].label}
+              </button>
+            ))}
+            <div className="mx-2 border-t border-white/40" role="separator" />
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => pickScene("off")}
+              className="mirror-no-hover block w-full px-3 py-2.5 text-left text-xs text-[var(--muted)] hover:bg-white/40"
+            >
+              关闭环境音
+            </button>
+          </div>
+        ) : null}
+
         <button
           type="button"
-          onClick={() => void toggleRain()}
-          aria-pressed={rainOn}
-          aria-label={rainOn ? "关闭雨声白噪音" : "播放雨声白噪音"}
-          title={rainOn ? "点击关闭雨声" : "点击播放雨声"}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          aria-label={scene === "off" ? "打开疗愈时空选单" : `当前：${labelForScene(scene)}，打开选单`}
+          title="疗愈时空"
           className={[
-            "shadow-mirror flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border transition sm:h-12 sm:w-12",
-            rainOn
+            "shadow-mirror flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border px-3.5 py-2 text-xs transition sm:min-w-[44px]",
+            scene !== "off"
               ? "border-stone-400 bg-stone-600 text-white"
               : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",
           ].join(" ")}
         >
-          <RainIcon className="h-5 w-5" />
+          <HealingIcon className="h-4 w-4 shrink-0 opacity-90" />
+          <span className="max-w-[5.5rem] truncate sm:max-w-[7rem]">
+            {scene === "off" ? "疗愈时空" : labelForScene(scene)}
+          </span>
         </button>
       </div>
     </div>
   );
 }
 
-function RainIcon({ className }: { className?: string }) {
+function labelForScene(id: HealingSceneId): string {
+  if (id === "off") return "疗愈时空";
+  return HEALING_SCENES[id].label;
+}
+
+function HealingIcon({ className }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.75}
-      strokeLinecap="round"
-      aria-hidden
-    >
-      <path d="M6 14c0-2.5 2-4 5-4s5 1.5 5 4" />
-      <path d="M4 18h2M9 18h2M14 18h2M18 18h2" />
-      <path d="M7 20v2M11 20v2M15 20v2" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 21a9 9 0 0 0 9-9c0-4.5-4-8-9-12C7 4 3 7.5 3 12a9 9 0 0 0 9 9Z"
+      />
+      <path strokeLinecap="round" d="M12 8v4l2 2" />
     </svg>
   );
 }
