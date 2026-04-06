@@ -20,7 +20,6 @@ import { pickRandomClassicQuote } from "@/lib/classic-quotes";
 import { MIRROR_PHILOSOPHY_OPTIONS } from "@/lib/mirror-prompts";
 import { MIRROR_TONE_OPTIONS, readStoredMirrorTone } from "@/lib/mirror-tone";
 import { patternRadarFromScan } from "@/lib/pattern-from-scan";
-import { saveReflectionHistoryRecord } from "@/lib/reflection-history-store";
 import {
   attachmentStyle,
   bundleForScanPhilosophyAnalysis,
@@ -78,7 +77,6 @@ export default function ResultPage() {
   );
   const [resultDimensionBanner, setResultDimensionBanner] = useState<string | null>(null);
   const [resultDimensionLoading, setResultDimensionLoading] = useState(false);
-  const [historySaved, setHistorySaved] = useState(false);
 
   useEffect(() => {
     if (!storageReady) return;
@@ -293,15 +291,6 @@ export default function ResultPage() {
     narrative,
     philosophy,
   ]);
-
-  useEffect(() => {
-    if (!storageReady || !isMainComplete || !scanOpenComplete || historySaved) return;
-    saveReflectionHistoryRecord({
-      narrative,
-      openAnswers: [...scanOpenTexts],
-    });
-    setHistorySaved(true);
-  }, [storageReady, isMainComplete, scanOpenComplete, historySaved, narrative, scanOpenTexts]);
 
   /** 完整扫描结果页：与哲学短析同摘要，生成六维多维觉察表 */
   useEffect(() => {
