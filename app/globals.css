@@ -227,65 +227,66 @@ body::before {
   opacity: 1;
 }
 
-/* ---------- 首页 hub：slogan 与「完整扫描」之间；位移与呼吸缩放分层，避免 transform 互覆盖 ---------- */
+/* 输入区小王子：focus / 打字触发的轻抛物线 + 落地压扁（1.5s ease-in-out） */
 @keyframes playful-jump {
-  /* 10s / 15s ≈ 66.67%：静坐（靠左，像待在名字/文案一侧） */
-  0%,
-  66.6667% {
-    transform: translate3d(-7.5rem, 0, 0);
+  0% {
+    transform: translate3d(0, 0, 0) scaleY(1);
   }
-  /* ~1.2s：抛向右上方 */
-  70% {
-    transform: translate3d(0, -3.25rem, 0);
+  38% {
+    transform: translate3d(5px, -10px, 0) scaleY(1);
   }
-  /* 落地右侧后停留 ~1.8s */
-  74.6667%,
-  86.6667% {
-    transform: translate3d(7.5rem, 0, 0);
+  72% {
+    transform: translate3d(5px, 0, 0) scaleY(1);
   }
-  /* ~2s：跳回左侧 */
-  91% {
-    transform: translate3d(0, -2.75rem, 0);
+  84% {
+    transform: translate3d(2px, 0, 0) scaleY(0.9);
   }
   100% {
-    transform: translate3d(-7.5rem, 0, 0);
+    transform: translate3d(0, 0, 0) scaleY(1);
   }
 }
 
-.hub-mascot-stage {
+.mirror-input-companion-cluster {
   position: relative;
-  z-index: 50;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  min-height: 4.5rem;
-  overflow: visible;
+}
+
+.emotional-companion-root {
+  position: absolute;
+  left: -0.125rem;
+  bottom: 0.2rem;
+  z-index: 2;
+  width: 60px;
+  pointer-events: none;
   opacity: 0.7;
+  transform: translateX(-14%);
 }
 
-.hub-mascot-hop {
-  animation: playful-jump 15s linear infinite;
-  will-change: transform;
+.emotional-companion-hop {
+  transform-origin: center bottom;
 }
 
-.hub-mascot-glass {
-  border-radius: 12px;
-  padding: 6px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
-  transform-origin: center center;
+.emotional-companion-hop--jumping {
+  animation: playful-jump 1.5s ease-in-out both;
 }
 
-.hub-mascot-img {
+.emotional-companion-img {
   display: block;
-  width: 66px;
-  min-width: 66px;
-  max-width: 66px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
+}
+
+.mirror-gentle-prompt-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mirror-gentle-prompt-card:hover .mirror-gentle-prompt-card__hint {
+    color: var(--ink);
+  }
 }
