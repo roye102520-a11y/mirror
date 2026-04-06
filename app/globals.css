@@ -22,14 +22,9 @@
   --mirror-bg-b: #e6f0fc;
   --mirror-bg-c: #fcecf3;
   --mirror-bg-d: #ebe6f8;
-  /* 分析页 AnalysisExperience 别名（与 mirror 书写变量一致） */
-  --foreground: var(--ink);
-  --border: var(--line);
-  --border-strong: var(--accent);
-  --quote: var(--ink);
 }
 
-/* 避免横向溢出裁切；右下角 CalmCornerWidget（fixed）与输入区小王子（.mascot-container）均需 overflow-x: visible */
+/* 避免横向溢出裁切；右下角 CalmCornerWidget 使用 fixed + overflow-visible */
 html {
   overflow-x: visible;
 }
@@ -192,17 +187,15 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 顶栏品牌（CalmCorner + 输入区 mascot） ---------- */
+/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
 }
 
 .mirror-brand-anchor {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
 }
 
 /* 右下角：仅靠呼吸圈上方浮现；须盖过页内装饰但不拦截点击 */
@@ -234,104 +227,124 @@ body::before {
   opacity: 1;
 }
 
-.mirror-input-companion-cluster {
-  position: relative;
-  overflow: visible;
-}
-
-/* ---------- EmotionalCompanion：输入框上方（父级 position: relative + overflow: visible） ---------- */
-@keyframes mascot-jump {
+/* ---------- 首页 hub：slogan 与「完整扫描」之间；位移与呼吸缩放分层，避免 transform 互覆盖 ---------- */
+@keyframes playful-jump {
+  /* 10s / 15s ≈ 66.67%：静坐（靠左，像待在名字/文案一侧） */
   0%,
+  66.6667% {
+    transform: translate3d(-7.5rem, 0, 0);
+  }
+  /* ~1.2s：抛向右上方 */
+  70% {
+    transform: translate3d(0, -3.25rem, 0);
+  }
+  /* 落地右侧后停留 ~1.8s */
+  74.6667%,
+  86.6667% {
+    transform: translate3d(7.5rem, 0, 0);
+  }
+  /* ~2s：跳回左侧 */
+  91% {
+    transform: translate3d(0, -2.75rem, 0);
+  }
   100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-25px);
+    transform: translate3d(-7.5rem, 0, 0);
   }
 }
 
-@keyframes mascot-intro-typewriter {
-  0% {
-    clip-path: inset(0 100% 0 0);
-    opacity: 0.65;
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-  }
-}
-
-.mascot-container {
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  width: 100%;
-  margin-bottom: 20px;
-  pointer-events: none;
-  z-index: 9999;
-  display: block;
-  visibility: visible;
-  box-sizing: border-box;
-}
-
-.mascot-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.35rem;
-}
-
-.mascot-bubble {
-  margin: 0;
-  padding: 0;
-  font-size: 12px;
-  line-height: 1.35;
-  color: var(--muted);
-  font-weight: 500;
-}
-
-.mascot-row {
+.hub-mascot-stage {
+  position: relative;
+  z-index: 50;
   display: flex;
   align-items: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
+  justify-content: center;
+  min-height: 4.5rem;
+  overflow: visible;
+  opacity: 0.7;
 }
 
-.mascot-intro-text {
-  flex: 1 1 min(0, 16rem);
-  min-width: 0;
-  font-size: 14px;
-  line-height: 1.55;
-  letter-spacing: 0.06em;
-  font-weight: 400;
-  color: #9ca3af;
-  animation: mascot-intro-typewriter 2.2s steps(28, end) 0.15s both;
-}
-
-.mascot-jump {
-  flex-shrink: 0;
-  transform-origin: center bottom;
-  animation: mascot-jump 6s ease-in-out infinite;
+.hub-mascot-hop {
+  animation: playful-jump 15s linear infinite;
   will-change: transform;
 }
 
-.mascot-img {
-  display: block !important;
-  visibility: visible !important;
-  width: 60px;
+.hub-mascot-glass {
+  border-radius: 12px;
+  padding: 6px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
+  transform-origin: center center;
+}
+
+.hub-mascot-img {
+  display: block;
+  width: 66px;
+  min-width: 66px;
+  max-width: 66px;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
 }
 
-.mirror-gentle-prompt-card {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* ---------- 书写区小王子：随 focus / 输入触发单次跳跃（与首页 hub 的 playful-jump 无关） ---------- */
+.emotional-companion {
+  pointer-events: none;
+  opacity: 0.7;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .mirror-gentle-prompt-card:hover .mirror-gentle-prompt-card__hint {
-    color: var(--ink);
+.emotional-companion--on-card {
+  position: absolute;
+  left: 0;
+  bottom: 0.2rem;
+  z-index: 3;
+  transform: translate(-6%, 38%);
+}
+
+.emotional-companion--above-field {
+  pointer-events: none;
+}
+
+@keyframes playful-input-jump {
+  0% {
+    transform: translate3d(0, 0, 0) scaleY(1);
   }
+  38% {
+    transform: translate3d(5px, -10px, 0) scaleY(1);
+  }
+  68% {
+    transform: translate3d(5px, 0, 0) scaleY(0.9);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+}
+
+.emotional-companion-hop {
+  animation: playful-input-jump 1.5s ease-in-out forwards;
+}
+
+.emotional-companion-glass {
+  border-radius: 12px;
+  padding: 5px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.08);
+  transform-origin: center bottom;
+}
+
+.emotional-companion-img {
+  display: block;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
 }

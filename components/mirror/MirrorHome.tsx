@@ -36,12 +36,10 @@ import {
   readStoredMirrorAutoStartQuiz,
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
-import { ChatInput } from "@/components/ChatInput";
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
-import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
+import { ChatInput } from "@/components/ChatInput";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
-import { MirrorInputCompanionCluster } from "./MirrorInputCompanionCluster";
+import { HubPlayfulMascot } from "./HubPlayfulMascot";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
@@ -133,9 +131,6 @@ export function MirrorHome() {
   const freeTextareaRef = useRef<HTMLTextAreaElement>(null);
   const randomTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const [freeGentleLine, setFreeGentleLine] = useState(() => randomGentlePrompt());
-  const [randomGentleLine, setRandomGentleLine] = useState(() => randomGentlePrompt());
-
   const allThreeQuickDone = useMemo(
     () =>
       resultsHydrated && Boolean(results.relation && results.work && results.growth),
@@ -144,14 +139,6 @@ export function MirrorHome() {
 
   useEffect(() => {
     setKeyDraft(getStoredDeepseekKey());
-  }, [view]);
-
-  useEffect(() => {
-    if (view === "free") setFreeGentleLine(randomGentlePrompt());
-  }, [view]);
-
-  useEffect(() => {
-    if (view === "random") setRandomGentleLine(randomGentlePrompt());
   }, [view]);
 
   useEffect(() => {
@@ -736,7 +723,10 @@ export function MirrorHome() {
             <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               We cannot control others. But we can see ourselves clearly.
             </p>
-            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
+            <div className="hub-mascot-band relative z-[50] mx-auto mt-5 max-w-xl overflow-visible pointer-events-none">
+              <HubPlayfulMascot />
+            </div>
+            <div className="mx-auto mt-6 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
@@ -843,32 +833,26 @@ export function MirrorHome() {
                 </button>
               ))}
             </div>
-            <MirrorInputCompanionCluster
-              gentlePrompt={freeGentleLine}
-              onGentlePick={(line) => {
-                setFreeText((prev) => (prev.trim() ? `${prev}\n${line}` : line));
+            <MirrorGuidanceBubbles
+              className="mt-4"
+              onPick={(text) => {
+                setFreeText(text);
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
-            >
-              <MirrorGuidanceBubbles
-                className="mt-0"
-                onPick={(text) => {
-                  setFreeText(text);
-                  requestAnimationFrame(() => freeTextareaRef.current?.focus());
-                }}
-              />
-              <div className="relative mt-3 overflow-visible">
-                <EmotionalCompanion />
-                <ChatInput
-                  ref={freeTextareaRef}
-                  value={freeText}
-                  onChange={(e) => setFreeText(e.target.value)}
-                  rows={12}
-                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-                  placeholder="写什么都可以。无需完整，只要对你真实。"
-                />
-              </div>
-            </MirrorInputCompanionCluster>
+            />
+            <ChatInput
+              ref={freeTextareaRef}
+              gentlePrompts
+              onGentleLinePick={(line) => {
+                setFreeText(line);
+                requestAnimationFrame(() => freeTextareaRef.current?.focus());
+              }}
+              value={freeText}
+              onChange={(e) => setFreeText(e.target.value)}
+              rows={12}
+              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+              placeholder="写什么都可以。无需完整，只要对你真实。"
+            />
             <button
               type="button"
               disabled={analyzeLoading}
@@ -1007,31 +991,26 @@ export function MirrorHome() {
               </p>
             </div>
             <label className="block text-xs text-[var(--muted)]">写下你的思考（可选）</label>
-            <MirrorInputCompanionCluster
-              gentlePrompt={randomGentleLine}
-              onGentlePick={(line) => {
-                setRandomReply((prev) => (prev.trim() ? `${prev}\n${line}` : line));
+            <MirrorGuidanceBubbles
+              className="mt-3"
+              onPick={(text) => {
+                setRandomReply(text);
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
-            >
-              <MirrorGuidanceBubbles
-                className="mt-0"
-                onPick={(text) => {
-                  setRandomReply(text);
-                  requestAnimationFrame(() => randomTextareaRef.current?.focus());
-                }}
-              />
-              <div className="relative mt-3 overflow-visible">
-                <EmotionalCompanion />
-                <ChatInput
-                  ref={randomTextareaRef}
-                  value={randomReply}
-                  onChange={(e) => setRandomReply(e.target.value)}
-                  rows={8}
-                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-                />
-              </div>
-            </MirrorInputCompanionCluster>
+            />
+            <ChatInput
+              ref={randomTextareaRef}
+              gentlePrompts
+              wrapperClassName="mt-2"
+              onGentleLinePick={(line) => {
+                setRandomReply(line);
+                requestAnimationFrame(() => randomTextareaRef.current?.focus());
+              }}
+              value={randomReply}
+              onChange={(e) => setRandomReply(e.target.value)}
+              rows={8}
+              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+            />
             <button
               type="button"
               disabled={analyzeLoading}

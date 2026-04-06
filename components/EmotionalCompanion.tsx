@@ -1,19 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+export type EmotionalCompanionProps = {
+  /** 递增时触发一次 1.5s 的抛物线跳跃 */
+  jumpSignal: number;
+  className?: string;
+};
+
 /**
- * 蹲在输入框上方（父级须 position: relative; overflow: visible）。
- * 图：/prince.png · 60px；样式见 app/globals.css .mascot-*
+ * 小王子：/prince.png · 60px · pointer-events: none · 不参与点击。
+ * 由父级 absolute 定位；opacity 在 .emotional-companion。
  */
-export function EmotionalCompanion() {
+export function EmotionalCompanion({ jumpSignal, className = "" }: EmotionalCompanionProps) {
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    if (jumpSignal <= 0) return;
+    setPlaying(true);
+    const t = window.setTimeout(() => setPlaying(false), 1500);
+    return () => window.clearTimeout(t);
+  }, [jumpSignal]);
+
   return (
-    <div className="mascot-container">
-      <div className="mascot-wrapper">
-        <p className="mascot-bubble">今天，想和我聊聊吗？</p>
-        <div className="mascot-row">
-          <span className="mascot-intro-text">今天，想和我聊聊你的内心世界吗？</span>
-          <div className="mascot-jump">
-            <img src="/prince.png" className="mascot-img" alt="小王子" width={60} height={60} decoding="async" draggable={false} />
-          </div>
+    <div
+      className={["emotional-companion", className].filter(Boolean).join(" ")}
+      aria-hidden
+    >
+      <div className={playing ? "emotional-companion-hop" : undefined}>
+        <div className="emotional-companion-glass">
+          {/* eslint-disable-next-line @next/next/no-img-element -- public 资产，需 pixelated 与固定尺寸 */}
+          <img
+            src="/prince.png"
+            alt=""
+            width={60}
+            height={60}
+            className="emotional-companion-img"
+            decoding="async"
+            draggable={false}
+          />
         </div>
       </div>
     </div>

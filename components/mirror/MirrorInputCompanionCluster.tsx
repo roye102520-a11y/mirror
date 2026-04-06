@@ -10,9 +10,7 @@ type Props = {
   children?: ReactNode;
 };
 
-/**
- * 书写区：仅磨砂引导卡；小王子须挂在含 textarea 的 relative 容器内（见 MirrorHome）。
- */
+/** 书写区布局参考；主路径请用 ChatInput（内含引导卡 + EmotionalCompanion）。 */
 export function MirrorInputCompanionCluster({ gentlePrompt, onGentlePick, children }: Props) {
   return (
     <div className="mirror-input-companion-cluster relative overflow-visible">

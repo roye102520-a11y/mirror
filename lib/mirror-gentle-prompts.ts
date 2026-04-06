@@ -1,15 +1,9 @@
-/** 输入区冷启动：磨砂卡片内随机展示的温柔起句 */
-
+/** 书写区磨砂引导卡随机文案（冷启动友好） */
 export const MIRROR_GENTLE_PROMPTS = [
-  "我觉得有点累……",
+  "我觉得有点累...",
   "今天有什么让你心动的细节吗？",
-  "此刻最想被谁认真听一次？",
-  "我对自己诚实的一点是……",
-  "有一件事我一直没说出口：",
-  "如果不用完美，我想写的是……",
+  "此刻最想被听懂的一句话是……",
+  "如果现在可以慢一点，我会……",
+  "我想说，却又咽回去的是……",
+  "有一件事，我一直没敢承认……",
 ];
-
-export function randomGentlePrompt(): string {
-  const i = Math.floor(Math.random() * MIRROR_GENTLE_PROMPTS.length);
-  return MIRROR_GENTLE_PROMPTS[i] ?? MIRROR_GENTLE_PROMPTS[0];
-}
