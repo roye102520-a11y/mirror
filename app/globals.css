@@ -173,45 +173,146 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 顶栏品牌 + EmotionalCompanion（mirror 旁） ---------- */
+/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
 }
 
 .mirror-brand-anchor {
-  position: relative;
   display: inline-flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 0.125rem;
-  overflow: visible;
-  /* 抛物线跳跃预留空间，负 margin 抵销占位避免顶栏过宽 */
-  padding: 12px 56px 10px 26px;
-  margin: -12px -56px -10px -26px;
+  align-items: center;
 }
 
-/* EmotionalCompanion：pointer-events: none，z-index 低于 Link（z-60） */
-.mascot-header-root {
+/* ---------- EmotionalCompanion：首页 hub 抛物跳跃 + 静止期气泡 ---------- */
+.mirror-hub-mascot-wrap {
   position: relative;
-  flex-shrink: 0;
-  width: 40px;
-  height: 44px;
-  pointer-events: none;
-  z-index: 50;
+  z-index: 1;
 }
 
-.mascot-header-bubble {
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 6px);
+/**
+ * 15s 周期：0–10s 静坐左侧；10–11.5s 跳到右侧；11.5–13.5s 右侧静止；13.5–15s 跳回左侧。
+ * 位移在 hop，挤压在 img，气泡随 hop 平移、不受 scale。
+ */
+@keyframes playful-jump-move {
+  0%,
+  66.6667% {
+    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
+  }
+  67.5% {
+    transform: translate3d(calc(-0.78 * var(--mascot-jump-dx)), -12px, 0);
+  }
+  70% {
+    transform: translate3d(calc(-0.32 * var(--mascot-jump-dx)), -40px, 0);
+  }
+  73.5% {
+    transform: translate3d(calc(0.38 * var(--mascot-jump-dx)), -20px, 0);
+  }
+  76.6667% {
+    transform: translate3d(var(--mascot-jump-dx), 0, 0);
+  }
+  90% {
+    transform: translate3d(var(--mascot-jump-dx), 0, 0);
+  }
+  90.8% {
+    transform: translate3d(calc(0.82 * var(--mascot-jump-dx)), -10px, 0);
+  }
+  93.2% {
+    transform: translate3d(calc(0.28 * var(--mascot-jump-dx)), -38px, 0);
+  }
+  95.8% {
+    transform: translate3d(calc(-0.48 * var(--mascot-jump-dx)), -16px, 0);
+  }
+  98.2% {
+    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
+  }
+  100% {
+    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
+  }
+}
+
+@keyframes playful-jump-squash {
+  0%,
+  66.6667% {
+    transform: scale(1, 1);
+  }
+  70% {
+    transform: scale(0.88, 0.88);
+  }
+  76.6667% {
+    transform: scale(1.12, 0.76);
+  }
+  77.8%,
+  90% {
+    transform: scale(1, 1);
+  }
+  93.2% {
+    transform: scale(0.88, 0.88);
+  }
+  98.2% {
+    transform: scale(1.1, 0.78);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.mascot-playful-hit {
+  pointer-events: auto;
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px 6px;
   margin: 0;
-  padding: 4px 8px;
+}
+
+.mascot-playful-stage {
+  --mascot-jump-dx: clamp(2.5rem, 12vw, 4.5rem);
+  position: relative;
+  overflow: visible;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-left: clamp(0.25rem, 6vw, 1.75rem);
+  pointer-events: none;
+}
+
+.mascot-playful-hop {
+  position: relative;
+  z-index: 50;
+  display: inline-block;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  animation: playful-jump-move 15s linear infinite;
+  will-change: transform;
+}
+
+.mascot-playful-img {
+  display: block;
+  width: 66px;
+  min-width: 66px;
+  max-width: 66px;
+  height: auto;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
+  transform-origin: 50% 100%;
+  animation: playful-jump-squash 15s linear infinite;
+}
+
+.mascot-playful-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  translate: -50% 0;
+  margin: 0;
+  padding: 5px 8px;
   max-width: 11rem;
-  border-radius: 6px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.07);
+  box-shadow: 0 2px 12px rgba(42, 42, 42, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   font-size: 10px;
@@ -220,59 +321,25 @@ body::before {
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.85s ease;
-  z-index: 55;
+  transition: opacity 0.9s ease;
+  z-index: 51;
 }
 
-.mascot-header-bubble--on {
+.mascot-playful-bubble--visible {
   opacity: 1;
 }
 
-.mascot-header-jump {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  transform-origin: 50% 100%;
-  will-change: transform;
-  animation: playful-jump 15s linear infinite;
-}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-playful-hop,
+  .mascot-playful-img {
+    animation: none !important;
+  }
 
-.mascot-header-img {
-  display: block;
-  width: 40px;
-  min-width: 40px;
-  height: auto;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
-}
+  .mascot-playful-hop {
+    transform: translate3d(calc(-1 * var(--mascot-jump-dx)), 0, 0);
+  }
 
-/*
- * 15s：前 10s 静坐左侧；后 5s 抛物线到右侧 → 停留约 2s → 跳回左侧。
- * 最高点略缩小、落地 squash & stretch。
- */
-@keyframes playful-jump {
-  0%,
-  66.6667% {
-    transform: translate(-12px, 2px) scale(1);
-  }
-  70% {
-    transform: translate(4px, -22px) scale(0.88);
-  }
-  76.6667% {
-    transform: translate(34px, 4px) scale(1.1, 0.76);
-  }
-  78%,
-  90% {
-    transform: translate(34px, 2px) scale(1);
-  }
-  94% {
-    transform: translate(8px, -18px) scale(0.9);
-  }
-  99% {
-    transform: translate(-12px, 2px) scale(1.08, 0.78);
-  }
-  100% {
-    transform: translate(-12px, 2px) scale(1);
+  .mascot-playful-img {
+    transform: none;
   }
 }

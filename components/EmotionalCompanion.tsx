@@ -2,49 +2,59 @@
 
 import { useEffect, useState } from "react";
 
-/** public/prince.png，与物理文件一致 */
-const MASCOT_SRC = "/prince.png" as const;
-
 const CYCLE_MS = 15_000;
-const REST_MS = 10_000;
+/** 静止在左侧（「坐」在名字旁） */
+const IDLE_LEFT_END = 10_000;
+/** 右侧落地后静止开始 */
+const IDLE_RIGHT_START = 11_500;
+const IDLE_RIGHT_END = 13_500;
 
-export type EmotionalCompanionProps = {
-  /** 鼠标靠近 .mirror-brand-anchor（由父级监听） */
-  anchorHovered: boolean;
-};
+const BUBBLE_TEXT = "今天天气不错，对吧？";
+
+function isBubblePhase(t: number): boolean {
+  return (t >= 0 && t < IDLE_LEFT_END) || (t >= IDLE_RIGHT_START && t < IDLE_RIGHT_END);
+}
 
 /**
- * 顶栏品牌旁：10s 静坐 + 5s 抛物线跳跃（playful-jump）；静止且靠近时缓缓显示气泡。
+ * 首页 hub：标语下方的小王子陪伴。15s 周期内约 10s 静坐、约 5s 抛物线往返；
+ * 静止期且指针靠近时才淡入气泡（不阻挡导航与点击）。
  */
-export function EmotionalCompanion({ anchorHovered }: EmotionalCompanionProps) {
-  const [inRestPhase, setInRestPhase] = useState(true);
+export function EmotionalCompanion() {
+  const [near, setNear] = useState(false);
+  const [stillPhase, setStillPhase] = useState(true);
 
   useEffect(() => {
     const tick = () => {
-      setInRestPhase((Date.now() % CYCLE_MS) < REST_MS);
+      setStillPhase(isBubblePhase(Date.now() % CYCLE_MS));
     };
     tick();
-    const id = window.setInterval(tick, 120);
+    const id = window.setInterval(tick, 80);
     return () => window.clearInterval(id);
   }, []);
 
-  const showBubble = inRestPhase && anchorHovered;
+  const bubbleOn = near && stillPhase;
 
   return (
-    <div className="mascot-header-root" aria-hidden>
-      <p className={`mascot-header-bubble${showBubble ? " mascot-header-bubble--on" : ""}`}>
-        今天天气不错，对吧？
-      </p>
-      <div className="mascot-header-jump">
-        <img
-          className="mascot-header-img"
-          src={MASCOT_SRC}
-          alt=""
-          width={40}
-          height={40}
-          decoding="async"
-          draggable={false}
-        />
+    <div
+      className="mascot-playful-hit"
+      onMouseEnter={() => setNear(true)}
+      onMouseLeave={() => setNear(false)}
+    >
+      <div className="mascot-playful-stage">
+        <div className="mascot-playful-hop">
+          <p className={`mascot-playful-bubble${bubbleOn ? " mascot-playful-bubble--visible" : ""}`}>
+            {BUBBLE_TEXT}
+          </p>
+          <img
+            className="mascot-playful-img"
+            src="/prince.png"
+            alt=""
+            width={66}
+            height={66}
+            decoding="async"
+            draggable={false}
+          />
+        </div>
       </div>
     </div>
   );

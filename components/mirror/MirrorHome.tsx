@@ -1,5 +1,6 @@
 "use client";
 
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { LocalPrivacyBar } from "@/components/LocalPrivacyBar";
 import { SiteHeader } from "@/components/SiteHeader";
 import dynamic from "next/dynamic";
@@ -721,6 +722,9 @@ export function MirrorHome() {
             <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               We cannot control others. But we can see ourselves clearly.
             </p>
+            <div className="mirror-hub-mascot-wrap mx-auto mt-8 flex max-w-xl justify-center overflow-visible px-1">
+              <EmotionalCompanion />
+            </div>
             <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
