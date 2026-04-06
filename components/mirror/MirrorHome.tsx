@@ -40,6 +40,7 @@ import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
+import { MirrorMascotField } from "./MirrorMascotField";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
 
 type View = "hub" | "free" | "quick" | "random" | "result" | "quick-triple-report";
@@ -835,14 +836,19 @@ export function MirrorHome() {
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
             />
-            <textarea
-              ref={freeTextareaRef}
-              value={freeText}
-              onChange={(e) => setFreeText(e.target.value)}
-              rows={12}
-              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-              placeholder="写什么都可以。无需完整，只要对你真实。"
-            />
+            <MirrorMascotField>
+              {(m) => (
+                <textarea
+                  ref={freeTextareaRef}
+                  {...m}
+                  value={freeText}
+                  onChange={(e) => setFreeText(e.target.value)}
+                  rows={12}
+                  className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                  placeholder="写什么都可以。无需完整，只要对你真实。"
+                />
+              )}
+            </MirrorMascotField>
             <button
               type="button"
               disabled={analyzeLoading}
@@ -988,13 +994,18 @@ export function MirrorHome() {
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
             />
-            <textarea
-              ref={randomTextareaRef}
-              value={randomReply}
-              onChange={(e) => setRandomReply(e.target.value)}
-              rows={8}
-              className="shadow-mirror mt-2 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-            />
+            <MirrorMascotField className="mt-2">
+              {(m) => (
+                <textarea
+                  ref={randomTextareaRef}
+                  {...m}
+                  value={randomReply}
+                  onChange={(e) => setRandomReply(e.target.value)}
+                  rows={8}
+                  className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                />
+              )}
+            </MirrorMascotField>
             <button
               type="button"
               disabled={analyzeLoading}

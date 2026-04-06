@@ -1,6 +1,7 @@
 "use client";
 
 import { MirrorGuidanceBubbles } from "@/components/mirror/MirrorGuidanceBubbles";
+import { MirrorMascotField } from "@/components/mirror/MirrorMascotField";
 import { SiteHeader } from "@/components/SiteHeader";
 import { narrativeGuidance } from "@/lib/analyze-narrative";
 import { useQuiz } from "@/context/QuizContext";
@@ -36,14 +37,19 @@ export default function YourTextPage() {
             requestAnimationFrame(() => textareaRef.current?.focus());
           }}
         />
-        <textarea
-          ref={textareaRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={10}
-          className="shadow-mirror mt-4 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
-          placeholder="在此粘贴或输入叙述……"
-        />
+        <MirrorMascotField className="mt-4">
+          {(m) => (
+            <textarea
+              ref={textareaRef}
+              {...m}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={10}
+              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
+              placeholder="在此粘贴或输入叙述……"
+            />
+          )}
+        </MirrorMascotField>
         <p className="mt-6 text-sm leading-relaxed text-[var(--muted)]">{guidance}</p>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <button

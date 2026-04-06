@@ -1,6 +1,5 @@
 "use client";
 
-import { EmotionalCompanion } from "./EmotionalCompanion";
 import { ReadmeIntro } from "@/components/ReadmeIntro";
 import Link from "next/link";
 
@@ -11,11 +10,10 @@ export function SiteHeader() {
         <div className="mirror-brand-anchor">
           <Link
             href="/"
-            className="mirror-brand-link relative z-[30] text-sm tracking-wide text-[var(--ink)] lowercase"
+            className="mirror-brand-link text-sm tracking-wide text-[var(--ink)] lowercase"
           >
             mirror
           </Link>
-          <EmotionalCompanion />
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[var(--muted)]">
           <ReadmeIntro />

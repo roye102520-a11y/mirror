@@ -184,198 +184,120 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- Mascot（--mascot-* 变量 + .mascot-* 类名）：顶栏 mirror 椭圆 + 上下浮动 ---------- */
+/* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
 }
 
-/*
- * overflow: visible 仅在此处声明一次（名字容器），避免轨道被裁切。
- * .mirror-site-header 默认即为 visible，不再重复写。
- */
 .mirror-brand-anchor {
-  --mascot-rx: min(50px, max(28px, calc(50vw - 120px)));
-  --mascot-ry: min(24px, max(12px, calc(0.45 * var(--mascot-rx))));
-  position: relative;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  overflow: visible;
-  padding: calc(var(--mascot-ry) + 12px) calc(var(--mascot-rx) + 32px) calc(var(--mascot-ry) + 10px)
-    calc(var(--mascot-rx) + 24px);
-  margin: calc(-1 * (var(--mascot-ry) + 12px)) calc(-1 * (var(--mascot-rx) + 32px))
-    calc(-1 * (var(--mascot-ry) + 10px)) calc(-1 * (var(--mascot-rx) + 24px));
 }
 
-@media (max-width: 480px) {
-  .mirror-brand-anchor {
-    --mascot-rx: min(40px, 30vw);
-    --mascot-ry: min(16px, 14vw);
-  }
+/* ---------- EmotionalCompanion：蹲在对话输入旁 ---------- */
+.mascot-field {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
 }
 
-.mirror-brand-anchor:hover .mascot-orbit,
-.mirror-brand-anchor:hover .mascot-vertical-bob,
-.mirror-brand-anchor:hover .mascot-img {
-  animation-play-state: paused;
-}
-
-.mirror-brand-anchor:hover .mascot-bubble {
-  opacity: 1;
-}
-
-/* 铺满品牌区定位上下文；仅此层关点击穿透，便于点到 mirror 链接与小王子 img */
-.mascot-arena {
-  position: absolute;
-  inset: 0;
+.mascot-by-input-root {
   pointer-events: none;
-  overflow: visible;
+  position: relative;
+  flex-shrink: 0;
 }
 
-/* 子元素各司其职：轨道仅 mascot-orbit，浮动仅 mascot-vertical-bob（各一条 animation） */
-.mascot-orbit {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  offset-rotate: 0deg;
-  animation: mascot-orbit-fallback 12s ease-in-out infinite;
-}
-
-@supports (offset-path: ellipse(12px 8px at 0 0)) {
-  .mascot-orbit {
-    offset-path: ellipse(var(--mascot-rx) var(--mascot-ry) at 0 0);
-    animation: mascot-orbit 12s ease-in-out infinite;
-  }
-}
-
-.mascot-vertical-bob {
-  position: absolute;
-  left: 0;
-  top: 0;
-  will-change: transform;
-  animation: mascot-bob 1s ease-in-out infinite;
-}
-
-.mascot-bubble {
+.mascot-by-input-bubble {
   position: absolute;
   bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   margin: 0;
   padding: 5px 8px;
-  max-width: 12rem;
+  max-width: 14rem;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(230, 228, 220, 0.95);
   box-shadow: 0 2px 10px rgba(42, 42, 42, 0.08);
   font-size: 11px;
   line-height: 1.35;
   color: var(--ink);
   white-space: nowrap;
-  pointer-events: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: 120;
+  transition: opacity 0.35s ease;
+  z-index: 5;
 }
 
-.mascot-img {
+.mascot-by-input-root--listening .mascot-by-input-bubble {
+  opacity: 1;
+}
+
+.mascot-by-input-float {
+  animation: mascot-float-slow 4s ease-in-out infinite;
+}
+
+.mascot-by-input-img {
   display: block;
   width: 40px;
   min-width: 40px;
-  flex-shrink: 0;
   height: auto;
-  position: relative;
-  z-index: 100;
-  opacity: 1;
-  pointer-events: auto;
+  flex-shrink: 0;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   transform-origin: center bottom;
-  transition: opacity 0.5s ease;
-  animation: mascot-orbit-depth 12s ease-in-out infinite;
+  transition: transform 0.28s ease;
 }
 
-@keyframes mascot-orbit {
-  0% {
-    offset-distance: 0%;
-    z-index: 40;
-  }
-  49.9% {
-    offset-distance: 49.9%;
-    z-index: 40;
-  }
-  50% {
-    offset-distance: 50%;
-    z-index: 5;
-  }
-  100% {
-    offset-distance: 100%;
-    z-index: 5;
-  }
+.mascot-by-input-root--listening .mascot-by-input-img {
+  transform: scale(1.1);
 }
 
-/* 绕到文字后时半透明，关键帧拉长过渡区 + img 上 transition 辅助观感 */
-@keyframes mascot-orbit-depth {
-  0%,
-  36% {
-    opacity: 1;
-  }
-  42% {
-    opacity: 0.72;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  58% {
-    opacity: 0.72;
-  }
-  64%,
-  100% {
-    opacity: 1;
-  }
+.mascot-field textarea {
+  width: 100%;
 }
 
-@keyframes mascot-bob {
+@keyframes mascot-float-slow {
   0%,
   100% {
-    transform: translate(-50%, calc(-50% + 2px));
+    transform: translateY(0);
   }
   50% {
-    transform: translate(-50%, calc(-50% - 2px));
+    transform: translateY(-2px);
   }
 }
 
-@keyframes mascot-orbit-fallback {
-  0% {
-    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
-    z-index: 40;
+/* 手机：吉祥物收入输入框内右侧，精灵略小 */
+@media (max-width: 480px) {
+  .mascot-field {
+    display: block;
   }
-  25% {
-    transform: translate(-50%, -50%) translateY(calc(-1 * var(--mascot-ry)));
-    z-index: 40;
+
+  .mascot-by-input-root {
+    position: absolute;
+    right: 0.45rem;
+    top: 50%;
+    margin-top: 0;
+    transform: translateY(-50%);
+    z-index: 2;
   }
-  49.9% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--mascot-rx)));
-    z-index: 40;
+
+  .mascot-by-input-img {
+    width: 30px;
+    min-width: 30px;
   }
-  50% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--mascot-rx)));
-    z-index: 5;
+
+  .mascot-field textarea {
+    padding-right: 2.75rem;
   }
-  75% {
-    transform: translate(-50%, -50%) translateY(var(--mascot-ry));
-    z-index: 5;
-  }
-  99.9% {
-    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
-    z-index: 5;
-  }
-  100% {
-    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
-    z-index: 40;
+
+  .mascot-by-input-bubble {
+    right: 0;
+    left: auto;
+    bottom: calc(100% + 4px);
+    white-space: normal;
+    max-width: min(12rem, calc(100vw - 3rem));
   }
 }
