@@ -252,6 +252,19 @@ body::before {
   }
 }
 
+/* 首页 hub：标语与卡片之间居中静立（无动效时请传 active=false） */
+.mirror-mascot-hub-root {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  min-height: 3.5rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 50;
+}
+
 .mirror-input-mascot-root {
   position: absolute;
   left: 0;

@@ -1,19 +1,19 @@
 "use client";
 
 export type EmotionalCompanionProps = {
-  /** 输入框聚焦或框内有内容时：轻微抛物跳跃（CSS 1.5s 循环） */
+  /** `input`：聚焦或框内有字时播放跳跃；`hub`：仅首页展示，通常为 false */
   active: boolean;
+  variant?: "hub" | "input";
 };
 
 /**
- * 仅用于主界面书写区：蹲在引导卡左缘，pointer-events: none，不妨碍输入与发送。
+ * 仅首页 hub 使用 `variant="hub"`；pointer-events: none，不挡点击。
  */
-export function EmotionalCompanion({ active }: EmotionalCompanionProps) {
+export function EmotionalCompanion({ active, variant = "input" }: EmotionalCompanionProps) {
+  const rootClass = variant === "hub" ? "mirror-mascot-hub-root" : "mirror-input-mascot-root";
+  const jumpClass = variant === "input" && active ? "mirror-input-mascot-root--active" : "";
   return (
-    <div
-      className={["mirror-input-mascot-root", active ? "mirror-input-mascot-root--active" : ""].filter(Boolean).join(" ")}
-      aria-hidden
-    >
+    <div className={[rootClass, jumpClass].filter(Boolean).join(" ")} aria-hidden>
       <div className="mirror-input-mascot-inner">
         <img
           className="mirror-input-mascot-img"
