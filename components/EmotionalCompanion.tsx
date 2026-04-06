@@ -1,22 +1,20 @@
 "use client";
 
 /**
- * 蹲在输入框上方（由父级 position: relative 定位）。
- * 图：/prince.png · 60px · pointer-events: none（见 globals .emotional-companion-root）
+ * 蹲在输入框上方（父级须 position: relative; overflow: visible）。
+ * 图：/prince.png · 60px；样式见 app/globals.css .mascot-*
  */
 export function EmotionalCompanion() {
   return (
-    <div className="emotional-companion-root" aria-hidden>
-      <div className="emotional-companion-float-jump-inner">
-        <img
-          className="emotional-companion-img"
-          src="/prince.png"
-          alt=""
-          width={60}
-          height={60}
-          decoding="async"
-          draggable={false}
-        />
+    <div className="mascot-container">
+      <div className="mascot-wrapper">
+        <p className="mascot-bubble">今天，想和我聊聊吗？</p>
+        <div className="mascot-row">
+          <span className="mascot-intro-text">今天，想和我聊聊你的内心世界吗？</span>
+          <div className="mascot-jump">
+            <img src="/prince.png" className="mascot-img" alt="小王子" width={60} height={60} decoding="async" draggable={false} />
+          </div>
+        </div>
       </div>
     </div>
   );

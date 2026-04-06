@@ -227,72 +227,98 @@ body::before {
   opacity: 1;
 }
 
-/* 输入框上的小王子：10s 周期，前段缓慢浮动，末段弧线跳一次 */
-@keyframes float-and-jump {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scaleY(1);
-  }
-  8% {
-    transform: translate3d(0, -4px, 0) scaleY(1);
-  }
-  18% {
-    transform: translate3d(0, 0, 0) scaleY(1);
-  }
-  28% {
-    transform: translate3d(0, -5px, 0) scaleY(1);
-  }
-  40% {
-    transform: translate3d(0, -2px, 0) scaleY(1);
-  }
-  52% {
-    transform: translate3d(0, -6px, 0) scaleY(1);
-  }
-  64% {
-    transform: translate3d(0, 0, 0) scaleY(1);
-  }
-  72% {
-    transform: translate3d(0, -3px, 0) scaleY(1);
-  }
-  80% {
-    transform: translate3d(0, 0, 0) scaleY(1);
-  }
-  87% {
-    transform: translate3d(10px, -18px, 0) scaleY(1);
-  }
-  92% {
-    transform: translate3d(5px, 1px, 0) scaleY(0.9);
-  }
-  97% {
-    transform: translate3d(0, 0, 0) scaleY(1);
-  }
-}
-
 .mirror-input-companion-cluster {
   position: relative;
+  overflow: visible;
 }
 
-.emotional-companion-root {
+/* ---------- EmotionalCompanion：输入框上方 ---------- */
+@keyframes gentle-jump {
+  0%,
+  72%,
+  100% {
+    transform: translateY(0) rotate(0deg) scaleY(1);
+  }
+  78% {
+    transform: translateY(-15px) rotate(6deg) scaleY(1);
+  }
+  84% {
+    transform: translateY(-10px) rotate(-3deg) scaleY(1);
+  }
+  88% {
+    transform: translateY(3px) rotate(0deg) scaleY(0.9);
+  }
+  93% {
+    transform: translateY(0) rotate(0deg) scaleY(1);
+  }
+}
+
+@keyframes mascot-intro-typewriter {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.65;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.mascot-container {
   position: absolute !important;
-  bottom: calc(100% + 10px) !important;
-  left: 0 !important;
-  z-index: 999 !important;
-  width: 60px;
+  bottom: 100% !important;
+  left: 20px !important;
+  z-index: 9999 !important;
+  display: block !important;
+  visibility: visible !important;
   pointer-events: none !important;
-  opacity: 0.7;
+  padding-bottom: 20px;
+  max-width: min(100vw - 2rem, 22rem);
 }
 
-.emotional-companion-float-jump-inner {
+.mascot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.mascot-bubble {
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.mascot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 0.75rem;
+}
+
+.mascot-intro-text {
+  flex: 1 1 8rem;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+  animation: mascot-intro-typewriter 2.2s steps(28, end) 0.15s both;
+}
+
+.mascot-jump {
+  flex-shrink: 0;
   transform-origin: center bottom;
-  animation: float-and-jump 10s ease-in-out infinite;
+  animation: gentle-jump 8s ease-in-out infinite;
   will-change: transform;
 }
 
-.emotional-companion-img {
-  display: block;
+.mascot-img {
+  display: block !important;
+  visibility: visible !important;
   width: 60px;
-  min-width: 60px;
-  max-width: 60px;
   height: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
