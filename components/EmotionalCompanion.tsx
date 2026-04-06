@@ -1,45 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 export type EmotionalCompanionProps = {
-  /** 递增时触发一次 1.5s 的抛物线跳跃 */
-  jumpSignal: number;
-  className?: string;
+  /** 输入框聚焦或框内有内容时：轻微抛物跳跃（CSS 1.5s 循环） */
+  active: boolean;
 };
 
 /**
- * 小王子：/prince.png · 60px · pointer-events: none · 不参与点击。
- * 由父级 absolute 定位；opacity 在 .emotional-companion。
+ * 仅用于主界面书写区：蹲在引导卡左缘，pointer-events: none，不妨碍输入与发送。
  */
-export function EmotionalCompanion({ jumpSignal, className = "" }: EmotionalCompanionProps) {
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    if (jumpSignal <= 0) return;
-    setPlaying(true);
-    const t = window.setTimeout(() => setPlaying(false), 1500);
-    return () => window.clearTimeout(t);
-  }, [jumpSignal]);
-
+export function EmotionalCompanion({ active }: EmotionalCompanionProps) {
   return (
     <div
-      className={["emotional-companion", className].filter(Boolean).join(" ")}
+      className={["mirror-input-mascot-root", active ? "mirror-input-mascot-root--active" : ""].filter(Boolean).join(" ")}
       aria-hidden
     >
-      <div className={playing ? "emotional-companion-hop" : undefined}>
-        <div className="emotional-companion-glass">
-          {/* eslint-disable-next-line @next/next/no-img-element -- public 资产，需 pixelated 与固定尺寸 */}
-          <img
-            src="/prince.png"
-            alt=""
-            width={60}
-            height={60}
-            className="emotional-companion-img"
-            decoding="async"
-            draggable={false}
-          />
-        </div>
+      <div className="mirror-input-mascot-inner">
+        <img
+          className="mirror-input-mascot-img"
+          src="/prince.png"
+          alt=""
+          width={60}
+          height={60}
+          decoding="async"
+          draggable={false}
+        />
       </div>
     </div>
   );

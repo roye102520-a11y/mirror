@@ -1,1 +1,2 @@
-小王子由 EmotionalCompanion 渲染（与 ChatInput 同级的父级 div 须 class 含 relative overflow-visible），资源 /public/prince.png（宽约 60px）。动效见 app/globals.css 的 @keyframes mascot-jump、@keyframes mascot-intro-typewriter。
+右下角 CalmCornerWidget：呼吸圈与「别怕，我在。」悬停气泡（z-index: 9999，pointer-events: none）。
+主界面「自由书写」「随机一问」：EmotionalCompanion 蹲在磨砂引导卡左缘，图片 /prince.png（60px），输入聚焦或框内有字时播放 mirror-input-playful-jump（仅主界面）。

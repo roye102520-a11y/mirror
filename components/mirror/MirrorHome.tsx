@@ -17,6 +17,7 @@ import {
   readStoredMirrorTone,
   writeStoredMirrorTone,
 } from "@/lib/mirror-tone";
+import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { getStoredDeepseekKey, setStoredDeepseekKey } from "@/lib/settings-storage";
 import {
   answersSummaryForApi,
@@ -37,10 +38,9 @@ import {
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
-import { ChatInput } from "@/components/ChatInput";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
-import { HubPlayfulMascot } from "./HubPlayfulMascot";
 import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
+import { MirrorInputCompanionCluster } from "./MirrorInputCompanionCluster";
 import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
 
@@ -117,6 +117,10 @@ export function MirrorHome() {
   const [freeWritingSeed, setFreeWritingSeed] = useState("");
   const [freeSeedLoading, setFreeSeedLoading] = useState(false);
   const [randomPromptLoading, setRandomPromptLoading] = useState(false);
+  const [freeGentleLine, setFreeGentleLine] = useState(() => randomGentlePrompt());
+  const [randomGentleLine, setRandomGentleLine] = useState(() => randomGentlePrompt());
+  const [freeInputFocused, setFreeInputFocused] = useState(false);
+  const [randomInputFocused, setRandomInputFocused] = useState(false);
 
   const [tripleReportText, setTripleReportText] = useState("");
   const [tripleReportErr, setTripleReportErr] = useState("");
@@ -139,6 +143,11 @@ export function MirrorHome() {
 
   useEffect(() => {
     setKeyDraft(getStoredDeepseekKey());
+  }, [view]);
+
+  useEffect(() => {
+    if (view === "free") setFreeGentleLine(randomGentlePrompt());
+    else if (view === "random") setRandomGentleLine(randomGentlePrompt());
   }, [view]);
 
   useEffect(() => {
@@ -723,10 +732,7 @@ export function MirrorHome() {
             <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               We cannot control others. But we can see ourselves clearly.
             </p>
-            <div className="hub-mascot-band relative z-[50] mx-auto mt-5 max-w-xl overflow-visible pointer-events-none">
-              <HubPlayfulMascot />
-            </div>
-            <div className="mx-auto mt-6 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
+            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
@@ -840,19 +846,25 @@ export function MirrorHome() {
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
             />
-            <ChatInput
-              ref={freeTextareaRef}
-              gentlePrompts
-              onGentleLinePick={(line) => {
+            <MirrorInputCompanionCluster
+              gentlePrompt={freeGentleLine}
+              mascotActive={freeInputFocused || freeText.trim().length > 0}
+              onGentlePick={(line) => {
                 setFreeText(line);
                 requestAnimationFrame(() => freeTextareaRef.current?.focus());
               }}
-              value={freeText}
-              onChange={(e) => setFreeText(e.target.value)}
-              rows={12}
-              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-              placeholder="写什么都可以。无需完整，只要对你真实。"
-            />
+            >
+              <textarea
+                ref={freeTextareaRef}
+                value={freeText}
+                onChange={(e) => setFreeText(e.target.value)}
+                onFocus={() => setFreeInputFocused(true)}
+                onBlur={() => setFreeInputFocused(false)}
+                rows={12}
+                className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                placeholder="写什么都可以。无需完整，只要对你真实。"
+              />
+            </MirrorInputCompanionCluster>
             <button
               type="button"
               disabled={analyzeLoading}
@@ -998,19 +1010,24 @@ export function MirrorHome() {
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
             />
-            <ChatInput
-              ref={randomTextareaRef}
-              gentlePrompts
-              wrapperClassName="mt-2"
-              onGentleLinePick={(line) => {
+            <MirrorInputCompanionCluster
+              gentlePrompt={randomGentleLine}
+              mascotActive={randomInputFocused || randomReply.trim().length > 0}
+              onGentlePick={(line) => {
                 setRandomReply(line);
                 requestAnimationFrame(() => randomTextareaRef.current?.focus());
               }}
-              value={randomReply}
-              onChange={(e) => setRandomReply(e.target.value)}
-              rows={8}
-              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-            />
+            >
+              <textarea
+                ref={randomTextareaRef}
+                value={randomReply}
+                onChange={(e) => setRandomReply(e.target.value)}
+                onFocus={() => setRandomInputFocused(true)}
+                onBlur={() => setRandomInputFocused(false)}
+                rows={8}
+                className="shadow-mirror mt-2 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+              />
+            </MirrorInputCompanionCluster>
             <button
               type="button"
               disabled={analyzeLoading}

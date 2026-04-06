@@ -1,40 +1,39 @@
 /**
- * 结果页可视化用：按天聚合的示意统计（可与日后真实 localStorage 流水对接）。
+ * 内省可视化用：按日聚合的示意/占位数据（可后续接 localStorage 真实书写记录）。
  */
 
 export type DailyReflectionStat = {
   date: string;
   count: number;
-  /** 与 MoodHeatmapCalendar 一致的中文标签 */
-  mood: string | null;
+  /** 与 MoodHeatmapCalendar 一致用中文标签；无记录为空串 */
+  mood: string;
   avgDepth: number | null;
 };
 
-const DEMO_MOODS = ["平静", "焦虑", "委屈", "愤怒", "麻木", "压抑", "自责", "混杂"] as const;
-
-function addDays(base: Date, delta: number): Date {
-  const d = new Date(base);
-  d.setDate(d.getDate() + delta);
-  return d;
-}
-
-function fmt(d: Date): string {
+function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-/** 生成最近 `days` 天的演示数据（稀疏记录 + 深度曲线） */
-export function buildDailyReflectionStats(days: number): DailyReflectionStat[] {
+/** 生成最近 `dayCount` 天的占位日统计（多数为零，便于展示空态） */
+export function buildDailyReflectionStats(dayCount: number): DailyReflectionStat[] {
   const out: DailyReflectionStat[] = [];
   const today = new Date();
-  for (let i = days - 1; i >= 0; i--) {
-    const dt = addDays(today, -i);
-    const seed = (i * 13 + 7) % 11;
-    const count = seed % 4 === 0 ? 0 : 1 + (seed % 3);
-    const mood: string | null =
-      count === 0 ? null : DEMO_MOODS[(seed + i) % DEMO_MOODS.length]!;
-    const avgDepth =
-      count === 0 ? null : Math.round(30 + 45 * Math.sin(i / 5) + (seed % 20));
-    out.push({ date: fmt(dt), count, mood, avgDepth });
+  today.setHours(12, 0, 0, 0);
+  const moods = ["平静", "焦虑", "委屈", "温暖", "疲惫", "压抑"] as const;
+
+  for (let i = dayCount - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const seed = (d.getFullYear() * 100 + d.getMonth() * 31 + d.getDate()) % 11;
+    const count = seed === 3 || seed === 7 ? 1 : seed === 9 ? 2 : 0;
+    const mood = count > 0 ? moods[seed % moods.length]! : "";
+    const avgDepth = count > 0 ? 3 + (seed % 7) + 0.5 * (seed % 3) : null;
+    out.push({
+      date: isoDate(d),
+      count,
+      mood,
+      avgDepth,
+    });
   }
   return out;
 }
