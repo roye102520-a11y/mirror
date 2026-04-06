@@ -26,14 +26,15 @@
 
 /* 避免横向溢出裁切；右下角 CalmCornerWidget 使用 fixed + overflow-visible */
 html {
-  overflow-x: visible;
+  overflow-x: hidden;
 }
 
 body {
   background-color: transparent;
   color: var(--ink);
   min-height: 100vh;
-  overflow-x: visible;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* 主壳与小王子路径：尽量不裁切 fixed 层（滚动仍由视口承担） */
@@ -45,6 +46,12 @@ body {
 /* 让小王子 fixed 动效尽量不被子页面 main 裁切 */
 main {
   overflow: visible !important;
+}
+
+.mirror-emotional-shell,
+.mirror-emotional-children {
+  overflow-x: visible;
+  overflow-y: visible;
 }
 
 /* 流体渐变背景：色值由 --mirror-bg-* 决定（疗愈时空切换时平滑变色），位置仍缓慢游移 */
@@ -208,7 +215,7 @@ body::before {
 /* ---------- 顶栏品牌（无轨道吉祥物） ---------- */
 .mirror-site-header {
   position: relative;
-  z-index: 55;
+  z-index: 10;
 }
 
 .mirror-brand-anchor {
@@ -251,20 +258,15 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
-  max-width: 100%;
   height: min(28vh, 9rem);
   z-index: 5;
   pointer-events: none;
   overflow: visible;
-  box-sizing: border-box;
   color: var(--accent);
 }
 
 .emotional-pulse-svg {
-  display: block;
   width: 100%;
-  max-width: 100%;
   height: 100%;
   opacity: 0.14;
   transition: opacity 0.45s ease, color 0.45s ease;
@@ -287,9 +289,8 @@ body::before {
 
 .mirror-emotional-companion-global {
   position: fixed;
-  z-index: 50 !important;
+  z-index: 100 !important;
   width: 40px;
-  max-width: 40px;
   pointer-events: none;
   display: flex;
   flex-direction: column;
@@ -309,11 +310,11 @@ body::before {
   min-width: 40px;
   max-width: 40px;
   height: auto;
-  opacity: 0.8;
   pointer-events: none;
+  opacity: 0.8;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.1));
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.08));
 }
 
 .mirror-mascot-whisper-bubble {
@@ -336,12 +337,11 @@ body::before {
   animation: random-appearance-whisper 4.4s ease-in-out forwards;
 }
 
-/* 问卷页：单行提示，避免折行撑出横向滚动 */
+/* /quiz：单行提示，避免折行占位 */
 .mirror-mascot-whisper-bubble--quiz {
   white-space: nowrap;
-  max-width: min(calc(100vw - 1.75rem), 20rem);
-  padding-inline: 6px;
-  font-size: 10px;
+  max-width: min(calc(100vw - 1.5rem), 16rem);
+  line-height: 1.2;
 }
 
 @keyframes random-appearance {
@@ -359,7 +359,7 @@ body::before {
   }
   100% {
     opacity: 0;
-    transform: scale(0.42);
+    transform: scale(0.48);
   }
 }
 
