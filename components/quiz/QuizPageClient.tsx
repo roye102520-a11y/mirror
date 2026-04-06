@@ -1,5 +1,6 @@
 "use client";
 
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { LocalPrivacyBar } from "@/components/LocalPrivacyBar";
 import { QuizProgressBar } from "@/components/QuizProgressBar";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -109,14 +110,17 @@ export function QuizPageClient() {
             不计分，仅用于生成报告中的文字与示意图表。可跳过未填。
           </p>
           <h1 className="mt-6 text-base font-normal leading-relaxed text-[var(--ink)]">{prompt}</h1>
-          <textarea
-            value={openDraft}
-            onChange={(e) => setOpenDraft(e.target.value)}
-            rows={8}
-            maxLength={1200}
-            className="mt-6 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-            placeholder="写几句即可，不必完整。"
-          />
+          <div className="relative mt-6 overflow-visible">
+            <EmotionalCompanion />
+            <textarea
+              value={openDraft}
+              onChange={(e) => setOpenDraft(e.target.value)}
+              rows={8}
+              maxLength={1200}
+              className="relative z-0 mt-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+              placeholder="写几句即可，不必完整。"
+            />
+          </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <button
               type="button"

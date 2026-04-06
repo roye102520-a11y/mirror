@@ -1,10 +1,9 @@
 "use client";
 
-import { EmotionalCompanion } from "./EmotionalCompanion";
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 
 export type ChatInputProps = ComponentPropsWithoutRef<"textarea"> & {
-  /** 附在包裹 textarea 的最外层 div（已含 relative overflow-visible） */
+  /** 包裹 textarea；须与 EmotionalCompanion 同级的父级一并设 relative overflow-visible（见 MirrorHome） */
   wrapperClassName?: string;
 };
 
@@ -14,7 +13,6 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(functio
 ) {
   return (
     <div className={["relative overflow-visible", wrapperClassName].filter(Boolean).join(" ")}>
-      <EmotionalCompanion />
       <textarea ref={ref} className={className} {...rest} />
     </div>
   );

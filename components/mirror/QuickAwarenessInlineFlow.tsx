@@ -10,6 +10,7 @@ import type { PhilosophyKey, QuickModuleId } from "@/lib/quick-awareness/types";
 import { MODULE_LABELS } from "@/lib/quick-awareness/types";
 import type { MirrorTone } from "@/lib/mirror-tone";
 import { ChatInput } from "@/components/ChatInput";
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { getStoredDeepseekKey } from "@/lib/settings-storage";
@@ -347,15 +348,17 @@ export function QuickAwarenessInlineFlow({
                       requestAnimationFrame(() => openTextareaRef.current?.focus());
                     }}
                   />
-                  <ChatInput
-                    ref={openTextareaRef}
-                    wrapperClassName="mt-3"
-                    value={openTextDraft}
-                    onChange={(e) => setOpenTextDraft(e.target.value)}
-                    rows={4}
-                    placeholder={q.placeholder}
-                    className="relative z-0 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-                  />
+                  <div className="relative mt-3 overflow-visible">
+                    <EmotionalCompanion />
+                    <ChatInput
+                      ref={openTextareaRef}
+                      value={openTextDraft}
+                      onChange={(e) => setOpenTextDraft(e.target.value)}
+                      rows={4}
+                      placeholder={q.placeholder}
+                      className="relative z-0 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+                    />
+                  </div>
                 </MirrorInputCompanionCluster>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button

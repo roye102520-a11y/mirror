@@ -243,10 +243,10 @@ body::before {
 @keyframes mascot-jump {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-20px) rotate(5deg);
+    transform: translateY(-25px);
   }
 }
 
@@ -266,7 +266,7 @@ body::before {
   bottom: 100%;
   left: 0;
   width: 100%;
-  padding-bottom: 12px;
+  margin-bottom: 20px;
   pointer-events: none;
   z-index: 9999;
   display: block;
@@ -304,24 +304,8 @@ body::before {
   line-height: 1.55;
   letter-spacing: 0.06em;
   font-weight: 400;
-  color: rgba(107, 107, 107, 0.88);
+  color: #9ca3af;
   animation: mascot-intro-typewriter 2.2s steps(28, end) 0.15s both;
-}
-
-@supports ((-webkit-background-clip: text) and (-webkit-text-fill-color: transparent)) or (background-clip: text) {
-  .mascot-intro-text {
-    background-image: linear-gradient(
-      115deg,
-      var(--muted) 0%,
-      #98938f 38%,
-      #b8b3ae 62%,
-      var(--muted) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
 }
 
 .mascot-jump {

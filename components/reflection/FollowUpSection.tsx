@@ -1,3 +1,7 @@
+"use client";
+
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
+
 type Props = {
   sessionDone: boolean;
   followUp: string;
@@ -21,13 +25,16 @@ export function FollowUpSection({
       {sessionDone ? (
         <p className="text-sm text-[var(--muted)]">本会话已结束，仍可查看下方回复。</p>
       ) : null}
-      <textarea
-        value={followUp}
-        onChange={(e) => onFollowUpChange(e.target.value)}
-        rows={4}
-        placeholder="还想问一句…"
-        className="w-full rounded-lg border border-[var(--border)] bg-white p-3 text-sm text-[var(--foreground)]"
-      />
+      <div className="relative overflow-visible">
+        <EmotionalCompanion />
+        <textarea
+          value={followUp}
+          onChange={(e) => onFollowUpChange(e.target.value)}
+          rows={4}
+          placeholder="还想问一句…"
+          className="relative z-0 mt-0 w-full rounded-lg border border-[var(--border)] bg-white p-3 text-sm text-[var(--foreground)]"
+        />
+      </div>
       <button
         type="button"
         disabled={busy || !followUp.trim()}

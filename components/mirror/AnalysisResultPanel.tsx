@@ -1,5 +1,6 @@
 "use client";
 
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import type { QuickDimensionAnalysis } from "@/lib/quick-awareness/dimension-analysis";
 import type { MirrorTone } from "@/lib/mirror-tone";
 import type { PhilosophyKey } from "@/lib/result-narratives";
@@ -144,14 +145,17 @@ export function AnalysisResultPanel({
               <p className="text-[11px] leading-relaxed text-[var(--muted)]">
                 可针对上面的追问写下任何片段：感受、画面、句子或反驳，不必完整。留空也可生成仅整合追问与前三要素的短文。
               </p>
-              <textarea
-                value={supplement}
-                onChange={(e) => setSupplement(e.target.value)}
-                rows={6}
-                maxLength={4000}
-                className="w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
-                placeholder="例如：若放下比较的尺子，我心里那份爱更像……"
-              />
+              <div className="relative overflow-visible">
+                <EmotionalCompanion />
+                <textarea
+                  value={supplement}
+                  onChange={(e) => setSupplement(e.target.value)}
+                  rows={6}
+                  maxLength={4000}
+                  className="relative z-0 mt-0 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
+                  placeholder="例如：若放下比较的尺子，我心里那份爱更像……"
+                />
+              </div>
               <button
                 type="button"
                 disabled={reportLoading}

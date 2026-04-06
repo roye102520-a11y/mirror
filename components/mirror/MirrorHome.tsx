@@ -37,6 +37,7 @@ import {
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
 import { ChatInput } from "@/components/ChatInput";
+import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { randomGentlePrompt } from "@/lib/mirror-gentle-prompts";
 import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
@@ -856,15 +857,17 @@ export function MirrorHome() {
                   requestAnimationFrame(() => freeTextareaRef.current?.focus());
                 }}
               />
-              <ChatInput
-                ref={freeTextareaRef}
-                wrapperClassName="mt-3"
-                value={freeText}
-                onChange={(e) => setFreeText(e.target.value)}
-                rows={12}
-                className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-                placeholder="写什么都可以。无需完整，只要对你真实。"
-              />
+              <div className="relative mt-3 overflow-visible">
+                <EmotionalCompanion />
+                <ChatInput
+                  ref={freeTextareaRef}
+                  value={freeText}
+                  onChange={(e) => setFreeText(e.target.value)}
+                  rows={12}
+                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                  placeholder="写什么都可以。无需完整，只要对你真实。"
+                />
+              </div>
             </MirrorInputCompanionCluster>
             <button
               type="button"
@@ -1018,14 +1021,16 @@ export function MirrorHome() {
                   requestAnimationFrame(() => randomTextareaRef.current?.focus());
                 }}
               />
-              <ChatInput
-                ref={randomTextareaRef}
-                wrapperClassName="mt-3"
-                value={randomReply}
-                onChange={(e) => setRandomReply(e.target.value)}
-                rows={8}
-                className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
-              />
+              <div className="relative mt-3 overflow-visible">
+                <EmotionalCompanion />
+                <ChatInput
+                  ref={randomTextareaRef}
+                  value={randomReply}
+                  onChange={(e) => setRandomReply(e.target.value)}
+                  rows={8}
+                  className="shadow-mirror relative z-0 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+                />
+              </div>
             </MirrorInputCompanionCluster>
             <button
               type="button"
