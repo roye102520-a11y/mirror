@@ -33,7 +33,7 @@ function LockIcon({ className }: { className?: string }) {
 /** 本地存储说明（浅色条 + 线形锁标） */
 export function LocalPrivacyBar() {
   return (
-    <div className="mt-auto border-t border-[rgba(231,229,228,0.8)] bg-[rgba(245,245,244,0.9)] px-5 py-3 text-center text-[11px] leading-relaxed text-stone-500">
+    <div className="mt-auto border-t border-[rgba(231,229,228,0.75)] bg-[rgba(250,248,252,0.78)] px-5 py-3 text-center text-[11px] leading-relaxed text-stone-500 backdrop-blur-sm">
       <p className="mx-auto flex max-w-xl items-start justify-center gap-2 text-left sm:items-center sm:text-center">
         <LockIcon className="mt-0.5 shrink-0 text-stone-400 sm:mt-0" />
         <span>

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-[var(--line)] bg-[var(--bg)]">
+    <header className="border-b border-[var(--line)] bg-[rgba(250,248,252,0.72)] backdrop-blur-md">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
         <Link href="/" className="text-sm tracking-wide text-[var(--ink)] lowercase">
           mirror

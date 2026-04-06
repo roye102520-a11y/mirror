@@ -34,12 +34,12 @@ export default function SettingsPage() {
           autoComplete="off"
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          className="mt-2 w-full border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
+          className="shadow-mirror mt-2 w-full rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
         />
         <button
           type="button"
           onClick={save}
-          className="mt-6 border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] hover:border-[var(--accent)]"
+          className="shadow-mirror mt-6 rounded-md border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] hover:border-[var(--accent)]"
         >
           保存
         </button>

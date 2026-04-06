@@ -61,7 +61,7 @@ export function CalmCornerWidget() {
       >
         <div className="relative flex h-14 w-14 items-center justify-center sm:h-16 sm:w-16">
           <div
-            className="animate-calm-breathe absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
+            className="animate-calm-breathe shadow-mirror absolute rounded-full bg-stone-500/45 ring-2 ring-stone-400/30"
             style={{ width: "56px", height: "56px" }}
             aria-hidden
           />
@@ -80,7 +80,7 @@ export function CalmCornerWidget() {
           aria-label={rainOn ? "关闭雨声白噪音" : "播放雨声白噪音"}
           title={rainOn ? "点击关闭雨声" : "点击播放雨声"}
           className={[
-            "flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border shadow-sm transition sm:h-12 sm:w-12",
+            "shadow-mirror flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border transition sm:h-12 sm:w-12",
             rainOn
               ? "border-stone-400 bg-stone-600 text-white"
               : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",

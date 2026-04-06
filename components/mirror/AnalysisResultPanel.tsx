@@ -3,6 +3,7 @@
 import type { QuickDimensionAnalysis } from "@/lib/quick-awareness/dimension-analysis";
 import type { MirrorTone } from "@/lib/mirror-tone";
 import type { PhilosophyKey } from "@/lib/result-narratives";
+import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import type { RefObject } from "react";
 import { useCallback, useState } from "react";
 import { MultiDimensionalReflectionTable } from "./MultiDimensionalReflectionTable";
@@ -82,26 +83,32 @@ export function AnalysisResultPanel({
       {/* 仅三张反思卡 + 多维表进入「保存为图片」，不含追问区与底部操作按钮 */}
       <div
         ref={captureRef}
-        className="space-y-5 rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm sm:p-8"
+        className="space-y-5 rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror sm:p-8"
       >
         {title ? <p className="text-xs tracking-wide text-[var(--muted)]">{title}</p> : null}
         <div>
           <h3 className="text-xs font-normal uppercase tracking-wide text-[var(--ink)]">情绪</h3>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{emotion}</p>
+          <div key={emotion.slice(0, 64)} className="mirror-ai-reveal">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{emotion}</p>
+          </div>
         </div>
         <div title="Attachment：与关系/成长叙事中反复抓握的主题相关（规则生成文案）">
           <h3 className="text-xs font-normal uppercase tracking-wide text-[var(--ink)]">
             <span className="sr-only">Attachment — </span>
             执着点
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{obsession}</p>
+          <div key={obsession.slice(0, 64)} className="mirror-ai-reveal">
+            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{obsession}</p>
+          </div>
         </div>
         <div>
           <h3 className="text-xs font-normal uppercase tracking-wide text-[var(--ink)]">反思问题</h3>
           {questionLoading ? (
             <p className="mt-2 text-sm text-[var(--muted)]">正在生成……</p>
           ) : (
-            <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{question}</p>
+            <div key={question.slice(0, 96)} className="mirror-ai-reveal">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{question}</p>
+            </div>
           )}
         </div>
 
@@ -121,12 +128,14 @@ export function AnalysisResultPanel({
       </div>
 
       {followUps.length > 0 ? (
-        <div className="space-y-3 rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm sm:p-8">
+        <div className="space-y-3 rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror sm:p-8">
           <h3 className="text-xs font-normal uppercase tracking-wide text-[var(--ink)]">进一步追问</h3>
           {followUps.map((s, i) => (
-            <p key={i} className="text-sm leading-relaxed text-[var(--muted)]">
-              {i + 1}. {s}
-            </p>
+            <div key={`${i}-${s.slice(0, 32)}`} className="mirror-ai-reveal">
+              <p className="text-sm leading-relaxed text-[var(--muted)]">
+                {i + 1}. {s}
+              </p>
+            </div>
           ))}
 
           {canShowFollowUpDialog ? (
@@ -140,14 +149,17 @@ export function AnalysisResultPanel({
                 onChange={(e) => setSupplement(e.target.value)}
                 rows={6}
                 maxLength={4000}
-                className="w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+                className="w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
                 placeholder="例如：若放下比较的尺子，我心里那份爱更像……"
               />
               <button
                 type="button"
                 disabled={reportLoading}
-                onClick={() => void onGenerateReport()}
-                className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-2.5 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] disabled:opacity-50"
+                onClick={(e) => {
+                  triggerMirrorRipple(e);
+                  void onGenerateReport();
+                }}
+                className="mirror-ripple-btn min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-2.5 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-50"
               >
                 {reportLoading ? "正在生成简易报告…" : "根据追问与我的回应 · 生成简易报告"}
               </button>
@@ -157,7 +169,9 @@ export function AnalysisResultPanel({
               {report ? (
                 <div className="border-t border-[var(--line)] pt-4">
                   <h4 className="text-xs font-normal uppercase tracking-wide text-[var(--ink)]">简易整合报告</h4>
-                  <p className="mt-2 text-sm leading-[1.75] text-[var(--muted)]">{report}</p>
+                  <div key={report.slice(0, 120)} className="mirror-ai-reveal">
+                    <p className="mt-2 text-sm leading-[1.75] text-[var(--muted)]">{report}</p>
+                  </div>
                 </div>
               ) : null}
             </div>
@@ -169,15 +183,18 @@ export function AnalysisResultPanel({
         <button
           type="button"
           onClick={onSavePng}
-          className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)]"
+          className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)]"
         >
           保存为图片
         </button>
         <button
           type="button"
           disabled={questionLoading || followUpLoading}
-          onClick={onFollowUp}
-          className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)] shadow-sm hover:border-[var(--accent)] disabled:opacity-40"
+          onClick={(e) => {
+            triggerMirrorRipple(e);
+            onFollowUp();
+          }}
+          className="mirror-ripple-btn min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-40"
         >
           {followUpLoading ? "生成中…" : "追问一次"}
         </button>

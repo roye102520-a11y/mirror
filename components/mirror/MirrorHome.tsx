@@ -36,7 +36,10 @@ import {
   readStoredMirrorAutoStartQuiz,
   writeStoredMirrorAutoStartQuiz,
 } from "@/lib/mirror-quiz-autostart";
+import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { AnalysisResultPanel } from "./AnalysisResultPanel";
+import { MirrorCalmIntroOverlay } from "./MirrorCalmIntroOverlay";
+import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 import { QuickAwarenessInlineFlow, type QuickAwarenessCompletePayload } from "./QuickAwarenessInlineFlow";
 
 type View = "hub" | "free" | "quick" | "random" | "result" | "quick-triple-report";
@@ -117,9 +120,14 @@ export function MirrorHome() {
   const [tripleReportErr, setTripleReportErr] = useState("");
   const [tripleReportLoading, setTripleReportLoading] = useState(false);
 
+  /** 首页静心卡片：同一会话内关闭后不再出现，直至新开标签/会话 */
+  const [calmIntroOpen, setCalmIntroOpen] = useState(false);
+
   const captureRef = useRef<HTMLDivElement>(null);
   const compareRef = useRef<HTMLDivElement>(null);
   const tripleReportRef = useRef<HTMLDivElement>(null);
+  const freeTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const randomTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   const allThreeQuickDone = useMemo(
     () =>
@@ -135,6 +143,18 @@ export function MirrorHome() {
     setMirrorToneState(readStoredMirrorTone());
     setAutoStartQuiz(readStoredMirrorAutoStartQuiz());
   }, []);
+
+  useEffect(() => {
+    if (view !== "hub") {
+      setCalmIntroOpen(false);
+      return;
+    }
+    try {
+      setCalmIntroOpen(sessionStorage.getItem("mirror-calm-intro-v1") !== "1");
+    } catch {
+      setCalmIntroOpen(true);
+    }
+  }, [view]);
 
   const fetchMirrorInspiration = useCallback(
     async (kind: "daily" | "random_question" | "free_seed"): Promise<string | null> => {
@@ -568,7 +588,7 @@ export function MirrorHome() {
       <button
         type="button"
         onClick={() => setView("free")}
-        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-sm transition hover:border-[var(--accent)]"
+        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror transition hover:border-[var(--accent)]"
       >
         <p className="text-sm font-normal text-[var(--ink)]">自由书写</p>
         <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">适合已经想清楚要写什么的人。</p>
@@ -580,7 +600,7 @@ export function MirrorHome() {
           setQuickModule(null);
           setView("quick");
         }}
-        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-sm transition hover:border-[var(--accent)]"
+        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror transition hover:border-[var(--accent)]"
       >
         <p className="text-sm font-normal text-[var(--ink)]">快速觉察</p>
         <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">适合思绪混乱、想快速得到反馈的人。</p>
@@ -588,7 +608,7 @@ export function MirrorHome() {
       <button
         type="button"
         onClick={() => setView("random")}
-        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-sm transition hover:border-[var(--accent)]"
+        className="rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror transition hover:border-[var(--accent)]"
       >
         <p className="text-sm font-normal text-[var(--ink)]">随机一问</p>
         <p className="mt-3 text-xs leading-relaxed text-[var(--muted)]">适合不想写、只想被启发的人。</p>
@@ -597,7 +617,7 @@ export function MirrorHome() {
   );
 
   const settingsBlock = (
-    <div className="mt-12 space-y-6 rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm">
+    <div className="mt-12 space-y-6 rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror">
       <div>
         <p className="text-xs font-normal text-[var(--ink)]">哲学取向</p>
         <p className="mt-1 text-xs text-[var(--muted)]">三个入口共用，用于生成反思语气。</p>
@@ -608,7 +628,7 @@ export function MirrorHome() {
               type="button"
               onClick={() => onPhilosophyPick(key)}
               className={[
-                "min-h-[44px] rounded-md border px-4 py-2 text-xs sm:min-h-0",
+                "shadow-mirror min-h-[44px] rounded-md border px-4 py-2 text-xs sm:min-h-0",
                 philosophy === key
                   ? "border-[var(--accent)] bg-stone-50 text-[var(--ink)]"
                   : "border-[var(--line)] bg-white text-[var(--muted)] hover:border-[var(--accent)]",
@@ -631,7 +651,7 @@ export function MirrorHome() {
               type="button"
               onClick={() => onTonePick(id)}
               className={[
-                "block w-full rounded-md border p-3 text-left text-sm shadow-sm transition sm:px-4",
+                "block w-full rounded-md border p-3 text-left text-sm shadow-mirror transition sm:px-4",
                 mirrorTone === id
                   ? "border-[var(--accent)] bg-stone-50 text-[var(--ink)]"
                   : "border-[var(--line)] bg-white text-[var(--muted)] hover:border-[var(--accent)]",
@@ -677,13 +697,13 @@ export function MirrorHome() {
           autoComplete="off"
           value={keyDraft}
           onChange={(e) => setKeyDraft(e.target.value)}
-          className="mt-3 w-full rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+          className="mt-3 w-full rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
           placeholder="sk-..."
         />
         <button
           type="button"
           onClick={() => setStoredDeepseekKey(keyDraft)}
-          className="mt-3 rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)]"
+          className="mt-3 rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)]"
         >
           保存 Key
         </button>
@@ -694,33 +714,33 @@ export function MirrorHome() {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-16 sm:px-6 sm:py-20">
+      <main className="relative mx-auto w-full max-w-3xl flex-1 px-5 py-16 sm:px-6 sm:py-20">
         {view === "hub" && (
           <>
             <p className="text-center text-sm font-normal lowercase tracking-[0.2em] text-[var(--ink)]">mirror</p>
             <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-[var(--muted)] sm:text-base">
               We cannot control others. But we can see ourselves clearly.
             </p>
-            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-sm sm:p-7">
+            <div className="mx-auto mt-10 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <p className="text-xs font-normal tracking-wide text-[var(--ink)]">完整扫描</p>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                 约 60 道选择题与三道开放题；完成后生成图表、模式雷达（由答题推导）与整体哲学短析。请先在下方选好哲学取向与对话语气，再开始——它们会同步到问卷并影响报告语气。若勾选「选好后自动进入完整扫描」，点选哲学或语气后也会直接跳转问卷。
               </p>
               <Link
                 href="/quiz"
-                className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-md border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] sm:w-auto"
+                className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-md border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] sm:w-auto"
               >
                 开始完整扫描
               </Link>
             </div>
-            <div className="mx-auto mt-12 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-sm sm:p-7">
+            <div className="mx-auto mt-12 max-w-xl rounded-lg border border-[var(--line)] bg-white p-6 text-left shadow-mirror sm:p-7">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-xs font-normal tracking-wide text-[var(--ink)]">今日一句</p>
                 <button
                   type="button"
                   disabled={dailyLineLoading}
                   onClick={() => void refreshDailyLine()}
-                  className="text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
+                  className="mirror-no-hover text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
                 >
                   换一句
                 </button>
@@ -740,13 +760,13 @@ export function MirrorHome() {
                   setView("quick");
                 }}
                 disabled={!dailyLine || dailyLineLoading}
-                className="mt-5 min-h-[44px] w-full rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto"
+                className="mt-5 min-h-[44px] w-full rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto"
               >
                 今天我想用这句话反思
               </button>
             </div>
             {allThreeQuickDone ? (
-              <div className="mx-auto mt-12 max-w-xl rounded-lg border border-[var(--accent)]/40 bg-amber-50/40 p-6 text-left shadow-sm sm:p-7">
+              <div className="mx-auto mt-12 max-w-xl rounded-lg border border-[var(--accent)]/40 bg-amber-50/40 p-6 text-left shadow-mirror sm:p-7">
                 <p className="text-xs font-normal tracking-wide text-[var(--ink)]">三模块已完成</p>
                 <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
                   关系、工作、自我成长三项快速觉察已保存在本机。可生成一段简易整合说明，把三个面向放在同一段落里对照（使用当前首页所选哲学取向）。
@@ -759,7 +779,7 @@ export function MirrorHome() {
                     setTripleReportLoading(false);
                     setView("quick-triple-report");
                   }}
-                  className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-md border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] sm:w-auto"
+                  className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-md border border-[var(--line)] bg-white px-5 py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] sm:w-auto"
                 >
                   生成简易整合报告
                 </button>
@@ -772,19 +792,19 @@ export function MirrorHome() {
 
         {view === "free" && (
           <div className="mx-auto max-w-xl space-y-6">
-            <button type="button" onClick={goHub} className="text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+            <button type="button" onClick={goHub} className="mirror-no-hover text-xs text-[var(--muted)] hover:text-[var(--ink)]">
               ← 返回
             </button>
             <h1 className="text-lg font-normal text-[var(--ink)]">自由书写</h1>
             {(freeSeedLoading || freeWritingSeed) && (
-              <div className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4 text-sm shadow-sm">
+              <div className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4 text-sm shadow-mirror">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs text-[var(--muted)]">书写提示（API 生成，每次进入本页更新）</p>
                   <button
                     type="button"
                     disabled={freeSeedLoading}
                     onClick={() => void refreshFreeSeed()}
-                    className="text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
+                    className="mirror-no-hover text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
                   >
                     换一句
                   </button>
@@ -801,25 +821,36 @@ export function MirrorHome() {
                   key={t}
                   type="button"
                   onClick={() => setFreeText((prev) => (prev ? `${prev}\n${t}` : t))}
-                  className="rounded-md border border-[var(--line)] bg-white px-3 py-2 text-xs text-[var(--ink)] shadow-sm hover:border-[var(--accent)]"
+                  className="rounded-md border border-[var(--line)] bg-white px-3 py-2 text-xs text-[var(--ink)] shadow-mirror hover:border-[var(--accent)]"
                   title={t}
                 >
                   模板 {i + 1}
                 </button>
               ))}
             </div>
+            <MirrorGuidanceBubbles
+              className="mt-4"
+              onPick={(text) => {
+                setFreeText(text);
+                requestAnimationFrame(() => freeTextareaRef.current?.focus());
+              }}
+            />
             <textarea
+              ref={freeTextareaRef}
               value={freeText}
               onChange={(e) => setFreeText(e.target.value)}
               rows={12}
-              className="w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+              className="shadow-mirror w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
               placeholder="写什么都可以。无需完整，只要对你真实。"
             />
             <button
               type="button"
               disabled={analyzeLoading}
-              onClick={() => void runFreeOrRandomAnalyze("free")}
-              className="min-h-[44px] w-full rounded-lg border border-[var(--line)] bg-white py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto sm:px-8"
+              onClick={(e) => {
+                triggerMirrorRipple(e);
+                void runFreeOrRandomAnalyze("free");
+              }}
+              className="mirror-ripple-btn min-h-[44px] w-full rounded-lg border border-[var(--line)] bg-white py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto sm:px-8"
             >
               {analyzeLoading ? "分析中…" : "反思"}
             </button>
@@ -828,11 +859,11 @@ export function MirrorHome() {
 
         {view === "quick" && !quickModule && (
           <div className="mx-auto max-w-xl space-y-6">
-            <button type="button" onClick={goHub} className="text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+            <button type="button" onClick={goHub} className="mirror-no-hover text-xs text-[var(--muted)] hover:text-[var(--ink)]">
               ← 返回
             </button>
             {quickSeedQuote ? (
-              <div className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4 text-sm shadow-sm">
+              <div className="rounded-lg border border-[var(--line)] bg-[var(--bg)] p-4 text-sm shadow-mirror">
                 <p className="text-xs text-[var(--muted)]">今日选读（将带入快速觉察最后的反思问句）</p>
                 <p className="mt-2 leading-relaxed text-[var(--ink)]">{quickSeedQuote}</p>
               </div>
@@ -844,7 +875,7 @@ export function MirrorHome() {
                   key={m}
                   type="button"
                   onClick={() => setQuickModule(m)}
-                  className="rounded-lg border border-[var(--line)] bg-white p-5 text-left text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)]"
+                  className="rounded-lg border border-[var(--line)] bg-white p-5 text-left text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)]"
                 >
                   {m === "relation" ? "关系觉察（12 题）" : m === "work" ? "工作觉察（14 题）" : "自我成长觉察（6 题）"}
                 </button>
@@ -867,7 +898,7 @@ export function MirrorHome() {
 
         {view === "quick-triple-report" && (
           <div className="mx-auto max-w-xl space-y-6">
-            <button type="button" onClick={goHub} className="text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+            <button type="button" onClick={goHub} className="mirror-no-hover text-xs text-[var(--muted)] hover:text-[var(--ink)]">
               ← 返回首页
             </button>
             {results.relation && results.work && results.growth ? (
@@ -876,7 +907,7 @@ export function MirrorHome() {
                 <p className="text-sm leading-relaxed text-[var(--muted)]">
                   以下摘录来自各模块 AI 反馈中的「情绪张力」一句，仅供核对；正式整合段落由模型根据完整答题摘要生成。
                 </p>
-                <div className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-sm">
+                <div className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-mirror">
                   {(["relation", "work", "growth"] as QuickModuleId[]).map((m) => (
                     <p key={m} className="text-sm leading-relaxed text-[var(--ink)]">
                       <span className="text-[var(--muted)]">{MODULE_LABELS[m]}</span>
@@ -889,8 +920,11 @@ export function MirrorHome() {
                   <button
                     type="button"
                     disabled={tripleReportLoading}
-                    onClick={() => void runTripleReport()}
-                    className="min-h-[44px] rounded-lg border border-[var(--line)] bg-white px-6 py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] disabled:opacity-40"
+                    onClick={(e) => {
+                      triggerMirrorRipple(e);
+                      void runTripleReport();
+                    }}
+                    className="mirror-ripple-btn min-h-[44px] rounded-lg border border-[var(--line)] bg-white px-6 py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-40"
                   >
                     {tripleReportLoading ? "生成中…" : tripleReportText ? "重新生成" : "生成简易报告"}
                   </button>
@@ -901,14 +935,16 @@ export function MirrorHome() {
                 {tripleReportText ? (
                   <div
                     ref={tripleReportRef}
-                    className="space-y-4 rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm sm:p-8"
+                    className="space-y-4 rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror sm:p-8"
                   >
                     <p className="text-xs text-[var(--muted)]">整合报告（{PHILOSOPHY_LABELS[philosophy]}）</p>
-                    <p className="text-sm leading-relaxed text-[var(--ink)]">{tripleReportText}</p>
+                    <div key={tripleReportText.slice(0, 120)} className="mirror-ai-reveal">
+                      <p className="text-sm leading-relaxed text-[var(--ink)]">{tripleReportText}</p>
+                    </div>
                     <button
                       type="button"
                       onClick={() => void saveBlockPng(tripleReportRef, "mirror-triple-report.png")}
-                      className="rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm shadow-sm hover:border-[var(--accent)]"
+                      className="rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm shadow-mirror hover:border-[var(--accent)]"
                     >
                       保存为图片
                     </button>
@@ -925,7 +961,7 @@ export function MirrorHome() {
 
         {view === "random" && (
           <div className="mx-auto max-w-xl space-y-6">
-            <button type="button" onClick={goHub} className="text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+            <button type="button" onClick={goHub} className="mirror-no-hover text-xs text-[var(--muted)] hover:text-[var(--ink)]">
               ← 返回
             </button>
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -934,28 +970,39 @@ export function MirrorHome() {
                 type="button"
                 disabled={randomPromptLoading}
                 onClick={() => void refreshRandomPrompt()}
-                className="text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
+                className="mirror-no-hover text-xs text-[var(--muted)] underline underline-offset-4 hover:text-[var(--ink)] disabled:opacity-40"
               >
                 换一问
               </button>
             </div>
-            <div className="rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm">
+            <div className="rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror">
               <p className="text-sm leading-relaxed text-[var(--ink)]">
                 {randomPromptLoading ? "正在生成问题…" : randomPrompt}
               </p>
             </div>
             <label className="block text-xs text-[var(--muted)]">写下你的思考（可选）</label>
+            <MirrorGuidanceBubbles
+              className="mt-3"
+              onPick={(text) => {
+                setRandomReply(text);
+                requestAnimationFrame(() => randomTextareaRef.current?.focus());
+              }}
+            />
             <textarea
+              ref={randomTextareaRef}
               value={randomReply}
               onChange={(e) => setRandomReply(e.target.value)}
               rows={8}
-              className="w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+              className="shadow-mirror mt-2 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] focus:border-[var(--accent)] focus:outline-none"
             />
             <button
               type="button"
               disabled={analyzeLoading}
-              onClick={() => void runFreeOrRandomAnalyze("random")}
-              className="min-h-[44px] w-full rounded-lg border border-[var(--line)] bg-white py-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto sm:px-8"
+              onClick={(e) => {
+                triggerMirrorRipple(e);
+                void runFreeOrRandomAnalyze("random");
+              }}
+              className="mirror-ripple-btn min-h-[44px] w-full rounded-lg border border-[var(--line)] bg-white py-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)] disabled:opacity-40 sm:w-auto sm:px-8"
             >
               {analyzeLoading ? "分析中…" : "反思"}
             </button>
@@ -964,7 +1011,7 @@ export function MirrorHome() {
 
         {view === "result" && result && (
           <div className="mx-auto max-w-xl space-y-8">
-            <button type="button" onClick={goHub} className="text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+            <button type="button" onClick={goHub} className="mirror-no-hover text-xs text-[var(--muted)] hover:text-[var(--ink)]">
               ← 返回首页
             </button>
 
@@ -1033,7 +1080,7 @@ export function MirrorHome() {
                       setComparePhase("pick");
                       setCompareOther(otherCompleted[0] ?? null);
                     }}
-                    className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)] shadow-sm hover:border-[var(--accent)]"
+                    className="min-h-[44px] rounded-md border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--muted)] shadow-mirror hover:border-[var(--accent)]"
                   >
                     对比其他模块
                   </button>
@@ -1053,7 +1100,7 @@ export function MirrorHome() {
             <ContradictionExercisePanel obsession={result.obsession} />
 
             {comparePhase === "pick" && activeQuick && (
-              <div className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-sm">
+              <div className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-mirror">
                 <p className="text-sm text-[var(--muted)]">选择与「{MODULE_SHORT[activeQuick]}」对照的模块：</p>
                 <select
                   value={compareOther ?? ""}
@@ -1089,7 +1136,7 @@ export function MirrorHome() {
             {comparePhase === "view" && activeQuick && compareOther && crossNorm && (
               <div
                 ref={compareRef}
-                className="space-y-5 rounded-lg border border-[var(--line)] bg-white p-6 shadow-sm sm:p-8"
+                className="space-y-5 rounded-lg border border-[var(--line)] bg-white p-6 shadow-mirror sm:p-8"
               >
                 <p className="text-xs text-[var(--muted)]">
                   交叉 · {MODULE_SHORT[activeQuick]} × {MODULE_SHORT[compareOther]}
@@ -1116,13 +1163,15 @@ export function MirrorHome() {
                   {crossLoading ? (
                     <p className="mt-2 text-sm text-[var(--muted)]">正在生成……</p>
                   ) : (
-                    <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{crossQ}</p>
+                    <div key={crossQ.slice(0, 96)} className="mirror-ai-reveal">
+                      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">{crossQ}</p>
+                    </div>
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={() => void saveBlockPng(compareRef, "mirror-cross.png")}
-                  className="rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm shadow-sm hover:border-[var(--accent)]"
+                  className="rounded-md border border-[var(--line)] bg-white px-4 py-2 text-sm shadow-mirror hover:border-[var(--accent)]"
                 >
                   保存交叉分析为图片
                 </button>
@@ -1132,6 +1181,7 @@ export function MirrorHome() {
         )}
       </main>
       <LocalPrivacyBar />
+      {calmIntroOpen ? <MirrorCalmIntroOverlay onDismiss={() => setCalmIntroOpen(false)} /> : null}
     </div>
   );
 }

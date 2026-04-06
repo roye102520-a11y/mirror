@@ -114,7 +114,7 @@ export function QuizPageClient() {
             onChange={(e) => setOpenDraft(e.target.value)}
             rows={8}
             maxLength={1200}
-            className="mt-6 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+            className="mt-6 w-full resize-y rounded-lg border border-[var(--line)] bg-white p-4 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
             placeholder="写几句即可，不必完整。"
           />
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

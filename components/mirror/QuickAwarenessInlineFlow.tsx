@@ -9,8 +9,10 @@ import { answersSummaryForApi, emotionSnapshot, obsessionPoint } from "@/lib/qui
 import type { PhilosophyKey, QuickModuleId } from "@/lib/quick-awareness/types";
 import { MODULE_LABELS } from "@/lib/quick-awareness/types";
 import type { MirrorTone } from "@/lib/mirror-tone";
+import { triggerMirrorRipple } from "@/lib/mirror-ripple";
 import { getStoredDeepseekKey } from "@/lib/settings-storage";
 import { useEffect, useRef, useState } from "react";
+import { MirrorGuidanceBubbles } from "./MirrorGuidanceBubbles";
 
 const FALLBACK_REFLECTION =
   "若愿自问：此刻心里最紧的那一处，在什么条件下会值得被轻轻松开一点点？";
@@ -24,8 +26,8 @@ const optionClass = (on: boolean) =>
   [
     "block w-full min-h-[44px] rounded-lg border p-3 text-left text-sm leading-relaxed transition touch-manipulation sm:min-h-0 md:px-4",
     on
-      ? "border-[var(--accent)] bg-stone-50 text-[var(--ink)] shadow-sm"
-      : "border-[var(--line)] bg-white text-[var(--ink)] shadow-sm active:bg-stone-100 hover:border-[var(--accent)]",
+      ? "border-[var(--accent)] bg-stone-50 text-[var(--ink)] shadow-mirror"
+      : "border-[var(--line)] bg-white text-[var(--ink)] shadow-mirror active:bg-stone-100 hover:border-[var(--accent)]",
   ].join(" ");
 
 /** 同一路由：反思问句 + analysis_table（六维）；无 Key 或失败时降级 */
@@ -114,6 +116,7 @@ export function QuickAwarenessInlineFlow({
   const [finishing, setFinishing] = useState(false);
   const textByIdRef = useRef<Record<string, string>>({});
   const finishLockRef = useRef(false);
+  const openTextareaRef = useRef<HTMLTextAreaElement>(null);
   textByIdRef.current = textById;
 
   const questions = getQuestionsForModule(module);
@@ -237,7 +240,7 @@ export function QuickAwarenessInlineFlow({
   };
 
   return (
-    <section className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-sm sm:p-7">
+    <section className="rounded-lg border border-[var(--line)] bg-white p-5 shadow-mirror sm:p-7">
       {seedQuote ? (
         <div className="mb-5 rounded-md border border-[var(--line)] bg-[var(--bg)] p-4 text-sm leading-relaxed text-[var(--muted)]">
           <p className="text-xs text-[var(--ink)]">今日选读</p>
@@ -250,7 +253,7 @@ export function QuickAwarenessInlineFlow({
           type="button"
           onClick={onBack}
           disabled={finishing}
-          className="min-h-[44px] text-xs text-[var(--muted)] hover:text-[var(--ink)] disabled:opacity-40 sm:min-h-0"
+          className="mirror-no-hover min-h-[44px] text-xs text-[var(--muted)] hover:text-[var(--ink)] disabled:opacity-40 sm:min-h-0"
         >
           返回
         </button>
@@ -301,7 +304,7 @@ export function QuickAwarenessInlineFlow({
                     type="button"
                     disabled={step === 0}
                     onClick={goQuizBack}
-                    className="min-h-[44px] px-3 py-3 text-xs text-[var(--muted)] hover:text-[var(--ink)] disabled:opacity-40"
+                    className="mirror-no-hover min-h-[44px] px-3 py-3 text-xs text-[var(--muted)] hover:text-[var(--ink)] disabled:opacity-40"
                   >
                     上一题
                   </button>
@@ -321,19 +324,30 @@ export function QuickAwarenessInlineFlow({
                     可选填写；点「完成并反思」生成报告，或「跳过」仅用前面选择题结果生成。
                   </p>
                 ) : null}
+                <MirrorGuidanceBubbles
+                  className="mt-3"
+                  onPick={(text) => {
+                    setOpenTextDraft(text);
+                    requestAnimationFrame(() => openTextareaRef.current?.focus());
+                  }}
+                />
                 <textarea
+                  ref={openTextareaRef}
                   value={openTextDraft}
                   onChange={(e) => setOpenTextDraft(e.target.value)}
                   rows={4}
                   placeholder={q.placeholder}
-                  className="mt-4 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-sm focus:border-[var(--accent)] focus:outline-none"
+                  className="mt-2 w-full resize-y rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror focus:border-[var(--accent)] focus:outline-none"
                 />
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"
                     disabled={finishing}
-                    onClick={() => submitTextAndFinish(false)}
-                    className="min-h-[44px] rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-sm hover:border-[var(--accent)]"
+                    onClick={(e) => {
+                      triggerMirrorRipple(e);
+                      submitTextAndFinish(false);
+                    }}
+                    className="mirror-ripple-btn min-h-[44px] rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--ink)] shadow-mirror hover:border-[var(--accent)]"
                   >
                     完成并反思
                   </button>
@@ -341,7 +355,7 @@ export function QuickAwarenessInlineFlow({
                     type="button"
                     disabled={finishing}
                     onClick={() => submitTextAndFinish(true)}
-                    className="min-h-[44px] rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--muted)] shadow-sm hover:border-[var(--accent)]"
+                    className="min-h-[44px] rounded-md border border-[var(--line)] bg-white p-3 text-sm text-[var(--muted)] shadow-mirror hover:border-[var(--accent)]"
                   >
                     跳过
                   </button>
@@ -350,7 +364,7 @@ export function QuickAwarenessInlineFlow({
                   <button
                     type="button"
                     onClick={goQuizBack}
-                    className="min-h-[44px] px-3 py-3 text-xs text-[var(--muted)] hover:text-[var(--ink)]"
+                    className="mirror-no-hover min-h-[44px] px-3 py-3 text-xs text-[var(--muted)] hover:text-[var(--ink)]"
                   >
                     上一题
                   </button>

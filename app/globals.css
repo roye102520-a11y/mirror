@@ -15,26 +15,152 @@
   --muted: #6b6b6b;
   --line: #d4d4d4;
   --accent: #5c5c5c;
+  /* 轻微立体阴影：卡片 / 气泡 / 按钮共用 */
+  --shadow-mirror: 0 3px 14px rgba(42, 42, 42, 0.09), 0 1px 4px rgba(42, 42, 42, 0.07);
 }
 
 body {
-  background: var(--bg);
+  background-color: transparent;
   color: var(--ink);
+  min-height: 100vh;
 }
 
-/* 右下角「呼吸训练器」缓慢缩放动画 */
-@keyframes calm-breathe {
+/* 极缓慢的流体渐变背景（约 20s 周期），淡紫 / 淡蓝 / 淡粉 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    125deg,
+    #efe8f7 0%,
+    #e6f0fc 35%,
+    #fcecf3 65%,
+    #ebe6f8 100%
+  );
+  background-size: 300% 300%;
+  animation: mirror-gradient-flow 20s ease-in-out infinite;
+}
+
+@keyframes mirror-gradient-flow {
   0%,
+  100% {
+    background-position: 8% 42%;
+  }
+  50% {
+    background-position: 92% 58%;
+  }
+}
+
+/* 右下角「呼吸训练器」：吸气 2.5s → 顶点停顿 0.5s（含淡变）→ 呼气 3.5s，周期 6.5s */
+@keyframes calm-breathe {
+  0% {
+    transform: scale(1);
+    opacity: 0.38;
+  }
+  /* 2.5 / 6.5 ≈ 38.46%：吸气至顶点 */
+  38.4615% {
+    transform: scale(1.22);
+    opacity: 0.52;
+  }
+  /* 顶点停顿中段：轻微淡出 */
+  42.3077% {
+    transform: scale(1.22);
+    opacity: 0.42;
+  }
+  /* 停顿结束：回到顶点不透明度 */
+  46.1538% {
+    transform: scale(1.22);
+    opacity: 0.52;
+  }
   100% {
     transform: scale(1);
     opacity: 0.38;
   }
-  50% {
-    transform: scale(1.22);
-    opacity: 0.52;
-  }
 }
 
 .animate-calm-breathe {
-  animation: calm-breathe 8s ease-in-out infinite;
+  animation: calm-breathe 6.5s linear infinite;
+}
+
+.shadow-mirror {
+  box-shadow: var(--shadow-mirror);
+}
+
+/* 桌面端：按钮轻微放大 + 淡色外发光（链接式纯文字按钮请加 .mirror-no-hover） */
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):not(.mirror-no-hover):hover,
+  a.shadow-mirror:hover {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 22px rgba(195, 175, 240, 0.34),
+      0 0 14px rgba(175, 210, 250, 0.2),
+      var(--shadow-mirror);
+  }
+
+  button:not(:disabled):not(.mirror-no-hover),
+  a.shadow-mirror {
+    transition:
+      transform 0.22s ease,
+      box-shadow 0.22s ease;
+  }
+}
+
+/* 水波纹粒子 */
+@keyframes mirror-ripple-expand {
+  to {
+    transform: translate(-50%, -50%) scale(22);
+    opacity: 0;
+  }
+}
+
+.mirror-ripple-wave {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.3);
+  animation: mirror-ripple-expand 0.55s ease-out forwards;
+}
+
+/** AI 回复式正文：自下而上浮现 */
+@keyframes mirror-ai-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mirror-ai-reveal {
+  animation: mirror-ai-rise 0.68s ease-out forwards;
+}
+
+/* 首页静心全屏遮罩：磨砂玻璃 + 离场向上滑出 */
+.mirror-calm-intro {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(252, 250, 255, 0.38);
+  transition:
+    transform 0.72s cubic-bezier(0.33, 1, 0.68, 1),
+    opacity 0.5s ease;
+}
+
+.mirror-calm-intro--exit {
+  transform: translateY(-100vh);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mirror-calm-intro__panel {
+  box-shadow:
+    0 8px 40px rgba(120, 100, 160, 0.08),
+    var(--shadow-mirror);
 }
