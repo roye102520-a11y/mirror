@@ -55,7 +55,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RootErrorBoundary>
           <QuizProvider>
             <QuickAwarenessProvider>
-              {children}
+              <div className="flex min-h-screen flex-col">
+                <div className="flex-1">{children}</div>
+                <footer className="mt-auto border-t border-[var(--line)]/60 bg-[rgba(250,248,252,0.45)] px-5 py-6 pb-24 text-center backdrop-blur-[6px] sm:px-6 sm:py-8 sm:pb-28">
+                  <p className="text-xs leading-relaxed text-[var(--muted)]">
+                    有问题可以联系我：
+                    <a
+                      className="mirror-no-hover break-all text-[var(--ink)] underline underline-offset-4 hover:text-[var(--accent)]"
+                      href="mailto:371243762@qq.com"
+                    >
+                      371243762@qq.com
+                    </a>
+                  </p>
+                </footer>
+              </div>
               <CalmCornerWidget />
             </QuickAwarenessProvider>
           </QuizProvider>
