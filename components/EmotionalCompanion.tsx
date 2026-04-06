@@ -1,7 +1,7 @@
 "use client";
 
-/** 与 public/prince.png 对应 */
-const MASCOT_SRC = "/prince.png" as const;
+import princeImg from "@/assets/prince.png";
+import Image from "next/image";
 
 export type EmotionalCompanionProps = {
   /** 由 CalmCornerWidget 统一检测：鼠标靠近右下角（含呼吸圈）时为 true */
@@ -9,8 +9,8 @@ export type EmotionalCompanionProps = {
 };
 
 /**
- * 小王子：固定在右下角 CalmCornerWidget 内，与呼吸圆圈同步缩放（8s = 4s 吸 + 4s 呼）。
- * 整体磨砂玻璃感 + opacity 0.7（见 globals .mascot-corner）。
+ * 小王子：右下角 CalmCornerWidget 内，与呼吸圆圈同步缩放。
+ * 图片经 import 打入构建产物，避免 Vercel 上 public 文件漏部署导致 404。
  */
 export function EmotionalCompanion({ cornerHovered = false }: EmotionalCompanionProps) {
   return (
@@ -19,13 +19,15 @@ export function EmotionalCompanion({ cornerHovered = false }: EmotionalCompanion
         别怕，我在。
       </p>
       <div className="mascot-corner-glass animate-calm-breathe-mascot">
-        <img
+        <Image
           className="mascot-corner-img"
-          src={MASCOT_SRC}
+          src={princeImg}
           alt=""
           width={40}
-          decoding="async"
-          draggable={false}
+          height={40}
+          unoptimized
+          priority
+          sizes="40px"
         />
       </div>
     </div>

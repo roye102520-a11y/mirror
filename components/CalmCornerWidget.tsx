@@ -90,7 +90,8 @@ export function CalmCornerWidget() {
 
   return (
     <div
-      className="pointer-events-none fixed right-0 z-[9999] overflow-visible p-3 sm:p-4"
+      className="pointer-events-none fixed right-0 isolate z-[9999] overflow-visible p-3 sm:p-4"
+      data-mirror-calm-corner=""
       style={{
         bottom: "max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.75rem))",
         paddingRight: "max(0.75rem, env(safe-area-inset-right, 0px))",
