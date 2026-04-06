@@ -1,1 +1,1 @@
-小王子由 EmotionalCompanion 渲染（/public/prince.png，宽 60px），蹲在书写区引导磨砂卡片边缘；动效见 app/globals.css @keyframes playful-jump。
+小王子由 EmotionalCompanion（经 ChatInput 包裹 textarea）渲染，资源 /public/prince.png（宽约 60px）；父级须 position: relative、overflow: visible。动效见 app/globals.css 的 @keyframes mascot-jump、@keyframes mascot-intro-typewriter。

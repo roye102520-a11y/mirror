@@ -3,15 +3,14 @@
 import dynamic from "next/dynamic";
 import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 import { EXAMPLE_PATTERN_DATA, PatternRadar, type PatternRadarData } from "@/components/PatternRadar";
-import { MoodHeatmapCalendar } from "@/components/MoodHeatmapCalendar";
-import { TrendLineChart, type TrendLinePoint } from "@/components/TrendLineChart";
+import { MoodHeatmapCalendar, buildDemoMoodDataForMonth } from "@/components/MoodHeatmapCalendar";
+import { TrendLineChart, buildDemoTrendPoints } from "@/components/TrendLineChart";
 import {
   HabitTrackerGrid,
   buildDemoHabitForMonth,
   buildDemoHabitSummaries,
 } from "@/components/HabitTrackerGrid";
 import { EXAMPLE_REFLECTION_TEXTS } from "@/lib/example-reflection-texts";
-import { buildDailyReflectionStats } from "@/lib/reflection-history-store";
 import { useMemo } from "react";
 
 const PersonalWordCloud = dynamic(
@@ -33,26 +32,17 @@ export function ReflectionVisualsSection({
   /** 传则替代示意模式雷达（如由主问卷推导） */
   patternData?: PatternRadarData | null;
 }) {
-  const { year, month, moodData, habitData, habitSummaries, trendData, texts, hasRealData } = useMemo(() => {
+  const { year, month, moodData, habitData, habitSummaries, trendData, texts } = useMemo(() => {
     const now = new Date();
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
-    const daily = buildDailyReflectionStats(35);
-    const moodData = daily
-      .filter((x) => x.count > 0 && x.mood)
-      .map((x) => ({ date: x.date, mood: x.mood }));
-    const trendData: TrendLinePoint[] = daily
-      .filter((x) => x.avgDepth !== null)
-      .map((x) => ({ date: x.date, value: x.avgDepth as number }));
-    const hasRealData = daily.some((x) => x.count > 0);
     return {
       year: y,
       month: m,
-      moodData,
+      moodData: buildDemoMoodDataForMonth(y, m),
       habitData: buildDemoHabitForMonth(y, m),
       habitSummaries: buildDemoHabitSummaries(y, m),
-      trendData,
-      hasRealData,
+      trendData: buildDemoTrendPoints(),
       texts: (() => {
         const t = narrative.trim();
         if (!t) return [...EXAMPLE_REFLECTION_TEXTS];
@@ -84,22 +74,14 @@ export function ReflectionVisualsSection({
       <SectionErrorBoundary label="情绪热力图">
         <div className="space-y-3">
           <h3 className="text-sm font-normal text-[var(--ink)]">情绪热力图</h3>
-          {hasRealData ? (
-            <MoodHeatmapCalendar year={year} month={month} data={moodData} />
-          ) : (
-            <p className="text-sm text-[var(--muted)]">今日尚无心事封存</p>
-          )}
+          <MoodHeatmapCalendar year={year} month={month} data={moodData} />
         </div>
       </SectionErrorBoundary>
 
       <SectionErrorBoundary label="趋势线">
         <div className="space-y-3">
           <h3 className="text-sm font-normal text-[var(--ink)]">反思深度 / 消耗趋势线</h3>
-          {hasRealData ? (
-            <TrendLineChart data={trendData} yMin={1} yMax={10} height={200} />
-          ) : (
-            <p className="text-sm text-[var(--muted)]">今日尚无心事封存</p>
-          )}
+          <TrendLineChart data={trendData} yMin={1} yMax={10} height={200} />
         </div>
       </SectionErrorBoundary>
 
