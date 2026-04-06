@@ -7,6 +7,5 @@
 
 推荐尺寸：约 48×48 px 至 96×96 px（显示时会缩放到 48CSS 像素，并保持像素风锐化）。
 
-如需改文件名或拆成两张图，请编辑：
-  components/EmotionalCompanion.tsx
-中的 EMOTIONAL_COMPANION_IMAGE 或 <picture> 结构。
+小王子与狐狸动画已改为全局组件 Mascot（public/prince.png）。
+本目录可忽略或自行删除。

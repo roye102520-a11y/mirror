@@ -1,5 +1,4 @@
 import { CalmCornerWidget } from "@/components/CalmCornerWidget";
-import { EmotionalCompanion } from "@/components/EmotionalCompanion";
 import { RootErrorBoundary } from "@/components/RootErrorBoundary";
 import { QuickAwarenessProvider } from "@/context/QuickAwarenessContext";
 import { QuizProvider } from "@/context/QuizContext";
@@ -57,7 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <QuizProvider>
             <QuickAwarenessProvider>
               {children}
-              <EmotionalCompanion />
               <CalmCornerWidget />
             </QuickAwarenessProvider>
           </QuizProvider>

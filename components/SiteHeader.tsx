@@ -1,15 +1,22 @@
 "use client";
 
+import { Mascot } from "@/components/Mascot";
 import { ReadmeIntro } from "@/components/ReadmeIntro";
 import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-[var(--line)] bg-[rgba(250,248,252,0.72)] backdrop-blur-md">
+    <header className="overflow-visible border-b border-[var(--line)] bg-[rgba(250,248,252,0.72)] backdrop-blur-md">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
-        <Link href="/" className="text-sm tracking-wide text-[var(--ink)] lowercase">
-          mirror
-        </Link>
+        <div className="mirror-brand-anchor">
+          <Link
+            href="/"
+            className="mirror-brand-link relative z-20 text-sm tracking-wide text-[var(--ink)] lowercase"
+          >
+            mirror
+          </Link>
+          <Mascot />
+        </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[var(--muted)]">
           <ReadmeIntro />
           <Link href="/quiz" className="hover:text-[var(--ink)]">
