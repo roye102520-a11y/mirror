@@ -23,7 +23,7 @@ const PersonalWordCloud = dynamic(
 );
 
 /**
- * 问卷完成页内省图表区：模式雷达（可有问卷推导数据）、情绪月历、趋势线、词云、习惯网格（示意数据）。
+ * 问卷完成页内省图表区：模式雷达（可有问卷推导数据）、词云、习惯网格（示意数据）。
  */
 export function ReflectionVisualsSection({
   narrative,
@@ -67,7 +67,7 @@ export function ReflectionVisualsSection({
       <header>
         <h2 className="text-base font-normal text-[var(--ink)]">内省可视化</h2>
         <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
-          模式雷达优先展示由本次扫描推导的执着维度强度；情绪月历、趋势线与习惯网格当前为与本月对齐的演示数据，词云优先使用你在问卷中的叙述与开放作答（若无则使用内置示例句）。
+          模式雷达优先展示由本次扫描推导的执着维度强度；词云优先使用你在问卷中的叙述与开放作答（若无则使用内置示例句）。
         </p>
       </header>
 

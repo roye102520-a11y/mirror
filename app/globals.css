@@ -184,77 +184,81 @@ body::before {
     var(--shadow-mirror);
 }
 
-/* ---------- 小王子 EmotionalCompanion：顶栏 mirror 旁椭圆轨道 ---------- */
+/* ---------- EmotionalCompanion（mascot-*）：顶栏 mirror 椭圆 guarding + 子级 vertical-float ---------- */
 .mirror-site-header {
   position: relative;
   z-index: 10;
+  overflow: visible;
 }
 
 .mirror-brand-anchor {
-  /* 椭圆半轴：水平约 50px，竖直略扁；窄屏自动缩小防出屏 */
-  --ec-rx: min(50px, max(28px, calc(50vw - 120px)));
-  --ec-ry: min(24px, max(12px, calc(0.45 * var(--ec-rx))));
+  --mascot-rx: min(50px, max(28px, calc(50vw - 120px)));
+  --mascot-ry: min(24px, max(12px, calc(0.45 * var(--mascot-rx))));
   position: relative;
   isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: calc(var(--ec-ry) + 12px) calc(var(--ec-rx) + 32px) calc(var(--ec-ry) + 10px) calc(var(--ec-rx) + 24px);
-  margin: calc(-1 * (var(--ec-ry) + 12px)) calc(-1 * (var(--ec-rx) + 32px)) calc(-1 * (var(--ec-ry) + 10px))
-    calc(-1 * (var(--ec-rx) + 24px));
+  overflow: visible;
+  padding: calc(var(--mascot-ry) + 12px) calc(var(--mascot-rx) + 32px) calc(var(--mascot-ry) + 10px)
+    calc(var(--mascot-rx) + 24px);
+  margin: calc(-1 * (var(--mascot-ry) + 12px)) calc(-1 * (var(--mascot-rx) + 32px))
+    calc(-1 * (var(--mascot-ry) + 10px)) calc(-1 * (var(--mascot-rx) + 24px));
 }
 
 @media (max-width: 480px) {
   .mirror-brand-anchor {
-    --ec-rx: min(40px, 30vw);
-    --ec-ry: min(16px, 14vw);
+    --mascot-rx: min(40px, 30vw);
+    --mascot-ry: min(16px, 14vw);
   }
 }
 
-.mirror-brand-anchor:hover .ec-orbit,
-.mirror-brand-anchor:hover .ec-bob,
-.mirror-brand-anchor:hover .ec-img {
+.mirror-brand-anchor:hover .mascot-orbit,
+.mirror-brand-anchor:hover .mascot-vertical-bob,
+.mirror-brand-anchor:hover .mascot-img {
   animation-play-state: paused;
 }
 
-.mirror-brand-anchor:hover .ec-bubble {
+.mirror-brand-anchor:hover .mascot-bubble {
   opacity: 1;
 }
 
-.ec-arena {
-  pointer-events: none;
+/* 铺满品牌区定位上下文；仅此层关点击穿透，便于点到 mirror 链接与小王子 img */
+.mascot-arena {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   overflow: visible;
 }
 
-.ec-orbit {
+/* 仅此层：椭圆轨道 guarding（单条 animation） */
+.mascot-orbit {
   position: absolute;
   left: 50%;
   top: 50%;
   width: 0;
   height: 0;
   offset-rotate: 0deg;
-  animation: companion-orbit-fallback 12s ease-in-out infinite;
+  animation: guarding-fallback 12s ease-in-out infinite;
 }
 
 @supports (offset-path: ellipse(12px 8px at 0 0)) {
-  .ec-orbit {
-    offset-path: ellipse(var(--ec-rx) var(--ec-ry) at 0 0);
-    animation: companion-orbit 12s ease-in-out infinite;
+  .mascot-orbit {
+    offset-path: ellipse(var(--mascot-rx) var(--mascot-ry) at 0 0);
+    animation: guarding 12s ease-in-out infinite;
   }
 }
 
-.ec-bob {
+/* 仅此层：上下浮动 vertical-float（单条 animation），与轨道父子分离避免覆盖 */
+.mascot-vertical-bob {
   position: absolute;
   left: 0;
   top: 0;
   will-change: transform;
-  animation: companion-vertical-float 1s ease-in-out infinite;
+  animation: vertical-float 1s ease-in-out infinite;
 }
 
-/* 默认仅用 opacity 隐藏气泡，不用 visibility/display，避免误挡小王子 */
-.ec-bubble {
+.mascot-bubble {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 50%;
@@ -272,25 +276,26 @@ body::before {
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.2s ease;
-  z-index: 50;
+  transition: opacity 0.5s ease;
+  z-index: 120;
 }
 
-.ec-img {
+.mascot-img {
   display: block;
   width: 40px;
   height: auto;
   position: relative;
-  z-index: 1;
+  z-index: 100;
+  opacity: 1;
   pointer-events: auto;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   transform-origin: center bottom;
-  animation: companion-orbit-depth 12s ease-in-out infinite;
+  transition: opacity 0.5s ease;
+  animation: guarding-depth 12s ease-in-out infinite;
 }
 
-/* 前半圈：在字前（高于 .mirror-brand-link 的 z-30）；后半圈：在字后 */
-@keyframes companion-orbit {
+@keyframes guarding {
   0% {
     offset-distance: 0%;
     z-index: 40;
@@ -309,18 +314,28 @@ body::before {
   }
 }
 
-@keyframes companion-orbit-depth {
+/* 绕到文字后时半透明，关键帧拉长过渡区 + img 上 transition 辅助观感 */
+@keyframes guarding-depth {
   0%,
-  49.9% {
+  36% {
     opacity: 1;
   }
-  50%,
-  100% {
+  42% {
+    opacity: 0.72;
+  }
+  50% {
     opacity: 0.5;
+  }
+  58% {
+    opacity: 0.72;
+  }
+  64%,
+  100% {
+    opacity: 1;
   }
 }
 
-@keyframes companion-vertical-float {
+@keyframes vertical-float {
   0%,
   100% {
     transform: translate(-50%, calc(-50% + 2px));
@@ -330,33 +345,33 @@ body::before {
   }
 }
 
-@keyframes companion-orbit-fallback {
+@keyframes guarding-fallback {
   0% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
+    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
     z-index: 40;
   }
   25% {
-    transform: translate(-50%, -50%) translateY(calc(-1 * var(--ec-ry)));
+    transform: translate(-50%, -50%) translateY(calc(-1 * var(--mascot-ry)));
     z-index: 40;
   }
   49.9% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--ec-rx)));
+    transform: translate(-50%, -50%) translateX(calc(-1 * var(--mascot-rx)));
     z-index: 40;
   }
   50% {
-    transform: translate(-50%, -50%) translateX(calc(-1 * var(--ec-rx)));
+    transform: translate(-50%, -50%) translateX(calc(-1 * var(--mascot-rx)));
     z-index: 5;
   }
   75% {
-    transform: translate(-50%, -50%) translateY(var(--ec-ry));
+    transform: translate(-50%, -50%) translateY(var(--mascot-ry));
     z-index: 5;
   }
   99.9% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
+    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
     z-index: 5;
   }
   100% {
-    transform: translate(-50%, -50%) translateX(var(--ec-rx));
+    transform: translate(-50%, -50%) translateX(var(--mascot-rx));
     z-index: 40;
   }
 }

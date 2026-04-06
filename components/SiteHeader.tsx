@@ -7,7 +7,7 @@ import Link from "next/link";
 export function SiteHeader() {
   return (
     <header className="mirror-site-header overflow-visible border-b border-[var(--line)] bg-[rgba(250,248,252,0.72)] backdrop-blur-md">
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
+      <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 overflow-visible px-5 py-4">
         <div className="mirror-brand-anchor">
           <Link
             href="/"
