@@ -3,7 +3,6 @@
 /**
  * 右下角：呼吸圈圈 + 「疗愈时空」环境音与背景渐变联动。
  * 音频许可见 lib/healing-space-scenes.ts
- * &lt;768px：疗愈列表为底部弹层 + 遮罩，避免与正文重叠。
  */
 import {
   HEALING_SCENE_ORDER,
@@ -15,25 +14,11 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const GRADIENT_TRANSITION_MS = 10_000;
-const MOBILE_MAX_PX = 767;
-
-function useIsHealingMobileSheet() {
-  const [mobile, setMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${MOBILE_MAX_PX}px)`);
-    const apply = () => setMobile(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-  return mobile;
-}
 
 export function CalmCornerWidget() {
   const [scene, setScene] = useState<HealingSceneId>("off");
   const [menuOpen, setMenuOpen] = useState(false);
   const [cornerHovered, setCornerHovered] = useState(false);
-  const isMobileSheet = useIsHealingMobileSheet();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cancelGradientRef = useRef<(() => void) | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -102,36 +87,6 @@ export function CalmCornerWidget() {
     setMenuOpen(false);
   }, []);
 
-  const menuItems = (
-    <>
-      {HEALING_SCENE_ORDER.map((key) => (
-        <button
-          key={key}
-          type="button"
-          role="menuitem"
-          onClick={() => pickScene(key)}
-          className={[
-            "mirror-no-hover mirror-healing-menu__item flex min-h-[44px] w-full items-center px-4 py-2 text-left text-xs transition-colors sm:px-3 sm:py-2.5",
-            scene === key
-              ? "bg-white/55 font-medium text-[var(--ink)]"
-              : "bg-transparent text-[var(--ink)] active:bg-white/50 sm:hover:bg-white/40",
-          ].join(" ")}
-        >
-          {HEALING_SCENES[key].label}
-        </button>
-      ))}
-      <div className="mx-2 border-t border-white/40" role="separator" />
-      <button
-        type="button"
-        role="menuitem"
-        onClick={() => pickScene("off")}
-        className="mirror-no-hover mirror-healing-menu__item flex min-h-[44px] w-full items-center px-4 py-2 text-left text-xs text-[var(--muted)] active:bg-white/50 sm:px-3 sm:py-2.5 sm:hover:bg-white/40"
-      >
-        关闭环境音
-      </button>
-    </>
-  );
-
   return (
     <div
       className="pointer-events-none fixed right-0 isolate z-[9999] overflow-visible p-3 sm:p-4"
@@ -171,58 +126,60 @@ export function CalmCornerWidget() {
           </div>
         </div>
 
-        <div ref={menuRef} className="relative w-full min-w-0">
-          {menuOpen && isMobileSheet ? (
-            <div
-              className="mirror-healing-mobile-root fixed inset-0 z-[10080] flex flex-col justify-end pointer-events-auto"
-              role="presentation"
-              onClick={() => setMenuOpen(false)}
-            >
-              <div
-                className="mirror-healing-mobile-backdrop absolute inset-0 bg-black/30"
-                aria-hidden
-              />
-              <div
-                className="mirror-healing-sheet relative z-[1] max-h-[min(70vh,28rem)] overflow-y-auto rounded-t-2xl border border-white/60 shadow-mirror"
-                role="menu"
-                aria-label="疗愈时空场景"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-[var(--line)]/80 sm:hidden" aria-hidden />
-                <div className="py-2">{ menuItems }</div>
-              </div>
-            </div>
-          ) : null}
-
-          {menuOpen && !isMobileSheet ? (
-            <div
-              className="mirror-healing-menu absolute bottom-full right-0 z-[10080] mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
-              role="menu"
-              aria-label="疗愈时空场景"
-            >
-              {menuItems}
-            </div>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={() => setMenuOpen((o) => !o)}
-            aria-expanded={menuOpen}
-            aria-haspopup="menu"
-            aria-label={scene === "off" ? "打开疗愈时空选单" : `当前：${labelForScene(scene)}，打开选单`}
-            title="疗愈时空"
-            className={[
-              "shadow-mirror flex min-h-[44px] items-center justify-center gap-3 rounded-full border px-3.5 py-2 text-xs transition sm:min-w-[44px]",
-              scene !== "off"
-                ? "border-stone-400 bg-stone-600 text-white"
-                : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",
-            ].join(" ")}
+        <div ref={menuRef} className="relative">
+        {menuOpen ? (
+          <div
+            className="mirror-healing-menu absolute bottom-full right-0 z-10 mb-2 w-[11.5rem] overflow-hidden rounded-2xl border border-white/55 py-1 shadow-mirror"
+            role="menu"
+            aria-label="疗愈时空场景"
           >
-            <HealingIcon className="h-4 w-4 shrink-0 opacity-90" />
-            <span className="max-w-[5.5rem] truncate sm:max-w-[7rem]">
-              {scene === "off" ? "疗愈时空" : labelForScene(scene)}
-            </span>
-          </button>
+            {HEALING_SCENE_ORDER.map((key) => (
+              <button
+                key={key}
+                type="button"
+                role="menuitem"
+                onClick={() => pickScene(key)}
+                className={[
+                  "mirror-no-hover block w-full px-3 py-2.5 text-left text-xs transition-colors",
+                  scene === key
+                    ? "bg-white/55 font-medium text-[var(--ink)]"
+                    : "bg-transparent text-[var(--ink)] hover:bg-white/40",
+                ].join(" ")}
+              >
+                {HEALING_SCENES[key].label}
+              </button>
+            ))}
+            <div className="mx-2 border-t border-white/40" role="separator" />
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => pickScene("off")}
+              className="mirror-no-hover block w-full px-3 py-2.5 text-left text-xs text-[var(--muted)] hover:bg-white/40"
+            >
+              关闭环境音
+            </button>
+          </div>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
+          aria-label={scene === "off" ? "打开疗愈时空选单" : `当前：${labelForScene(scene)}，打开选单`}
+          title="疗愈时空"
+          className={[
+            "shadow-mirror flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border px-3.5 py-2 text-xs transition sm:min-w-[44px]",
+            scene !== "off"
+              ? "border-stone-400 bg-stone-600 text-white"
+              : "border-[var(--line)] bg-white/90 text-[var(--ink)] backdrop-blur-sm hover:border-[var(--accent)]",
+          ].join(" ")}
+        >
+          <HealingIcon className="h-4 w-4 shrink-0 opacity-90" />
+          <span className="max-w-[5.5rem] truncate sm:max-w-[7rem]">
+            {scene === "off" ? "疗愈时空" : labelForScene(scene)}
+          </span>
+        </button>
         </div>
       </div>
     </div>

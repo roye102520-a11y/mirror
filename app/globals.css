@@ -26,32 +26,14 @@
 
 /* 避免横向溢出裁切；右下角 CalmCornerWidget 使用 fixed + overflow-visible */
 html {
-  overflow-x: hidden;
+  overflow-x: visible;
 }
 
 body {
   background-color: transparent;
   color: var(--ink);
   min-height: 100vh;
-  overflow-x: hidden;
-  max-width: 100%;
-}
-
-/* 主壳与小王子路径：尽量不裁切 fixed 层（滚动仍由视口承担） */
-.mirror-app-shell,
-.mirror-app-main {
-  overflow: visible !important;
-}
-
-/* 让小王子 fixed 动效尽量不被子页面 main 裁切 */
-main {
-  overflow: visible !important;
-}
-
-.mirror-emotional-shell,
-.mirror-emotional-children {
   overflow-x: visible;
-  overflow-y: visible;
 }
 
 /* 流体渐变背景：色值由 --mirror-bg-* 决定（疗愈时空切换时平滑变色），位置仍缓慢游移 */
@@ -72,18 +54,11 @@ body::before {
   pointer-events: none;
 }
 
-/* 疗愈时空：桌面下拉 / 移动底栏（高 z-index、高不透明度，避免与正文重叠） */
+/* 疗愈时空：毛玻璃菜单（仅样式层，不影响主内容与输入框层级） */
 .mirror-healing-menu {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.mirror-healing-sheet {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.9);
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.42);
 }
 
 @keyframes mirror-gradient-flow {
@@ -252,133 +227,65 @@ body::before {
   opacity: 1;
 }
 
-/* ---------- 全局 EmotionalPulse：背景脉动曲线 ---------- */
-.emotional-pulse-layer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: min(28vh, 9rem);
-  z-index: 5;
-  pointer-events: none;
-  overflow: visible;
-  color: var(--accent);
+/* ---------- 首页 hub：slogan 与「完整扫描」之间；位移与呼吸缩放分层，避免 transform 互覆盖 ---------- */
+@keyframes playful-jump {
+  /* 10s / 15s ≈ 66.67%：静坐（靠左，像待在名字/文案一侧） */
+  0%,
+  66.6667% {
+    transform: translate3d(-7.5rem, 0, 0);
+  }
+  /* ~1.2s：抛向右上方 */
+  70% {
+    transform: translate3d(0, -3.25rem, 0);
+  }
+  /* 落地右侧后停留 ~1.8s */
+  74.6667%,
+  86.6667% {
+    transform: translate3d(7.5rem, 0, 0);
+  }
+  /* ~2s：跳回左侧 */
+  91% {
+    transform: translate3d(0, -2.75rem, 0);
+  }
+  100% {
+    transform: translate3d(-7.5rem, 0, 0);
+  }
 }
 
-.emotional-pulse-svg {
-  width: 100%;
-  height: 100%;
-  opacity: 0.14;
-  transition: opacity 0.45s ease, color 0.45s ease;
-}
-
-.emotional-pulse-svg--lit {
-  opacity: 0.42;
-  color: var(--ink);
-}
-
-/* ---------- EmotionalCompanion：全局 fixed，锚点由 data-mirror-companion-anchor ---------- */
-.mirror-hub-slogan-hero {
-  padding-top: 0.5rem;
-}
-
-.mirror-hub-title-row {
+.hub-mascot-stage {
   position: relative;
-  width: 100%;
-}
-
-.mirror-emotional-companion-global {
-  position: fixed;
-  z-index: 100 !important;
-  width: 40px;
-  pointer-events: none;
+  z-index: 50;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 4.5rem;
   overflow: visible;
+  opacity: 0.7;
 }
 
-.mirror-mascot-random-burst {
-  transform-origin: center bottom;
-  animation: random-appearance 4.4s ease-in-out forwards;
-  will-change: transform, opacity;
+.hub-mascot-hop {
+  animation: playful-jump 15s linear infinite;
+  will-change: transform;
 }
 
-.mirror-mascot-img {
+.hub-mascot-glass {
+  border-radius: 12px;
+  padding: 6px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 14px rgba(42, 42, 42, 0.08);
+  transform-origin: center center;
+}
+
+.hub-mascot-img {
   display: block;
-  width: 40px;
-  min-width: 40px;
-  max-width: 40px;
+  width: 66px;
+  min-width: 66px;
+  max-width: 66px;
   height: auto;
-  pointer-events: none;
-  opacity: 0.8;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.08));
+  filter: drop-shadow(0 1px 2px rgba(42, 42, 42, 0.12));
 }
-
-.mirror-mascot-whisper-bubble {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  margin: 0;
-  padding: 4px 8px;
-  max-width: min(12rem, 70vw);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 10px rgba(42, 42, 42, 0.06);
-  font-size: 10px;
-  line-height: 1.35;
-  color: var(--ink);
-  text-align: center;
-  pointer-events: none;
-  transform: translateX(-50%);
-  animation: random-appearance-whisper 4.4s ease-in-out forwards;
-}
-
-/* /quiz：单行提示，避免折行占位 */
-.mirror-mascot-whisper-bubble--quiz {
-  white-space: nowrap;
-  max-width: min(calc(100vw - 1.5rem), 16rem);
-  line-height: 1.2;
-}
-
-@keyframes random-appearance {
-  0% {
-    opacity: 0;
-    transform: scale(1);
-  }
-  14% {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  38% {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.48);
-  }
-}
-
-@keyframes random-appearance-whisper {
-  0%,
-  8% {
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.75;
-  }
-  36% {
-    opacity: 0.85;
-  }
-  48% {
-    opacity: 0.85;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
