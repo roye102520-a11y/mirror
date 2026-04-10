@@ -44,7 +44,7 @@ export function ReadmeIntro() {
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="flex max-h-[100dvh] w-full max-w-lg flex-col overflow-hidden border border-[var(--line)] bg-[var(--bg)] shadow-mirror sm:max-h-[90vh] sm:rounded-sm"
+            className="mt-20 sm:mt-24 flex max-h-[100dvh] w-full max-w-2xl mx-auto flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-sm sm:max-h-[90vh]"
           >
             <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-3">
               <h2 id={titleId} className="text-sm font-normal tracking-wide text-[var(--ink)]">
