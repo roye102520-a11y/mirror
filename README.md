@@ -1,51 +1,63 @@
-This is a small reflection tool for moments when social relationships feel confusing.
+🪞 Mirror · 关系反思工具
 
-You can paste a short conversation or describe a situation that made you think.
+当社交关系让你感到困惑时，用来帮你理清思绪的小工具。
 
-The tool will not judge the other person, and it will not try to predict the future of the relationship.
+在线体验 → mirror-swart.vercel.app
 
-Instead, it offers three small reflections:
-an emotion it notices,
-a possible point of fixation in your thinking,
-and a hypothetical question to help you see your own needs more clearly.
+目录
 
-The goal is not to give answers about others,
-but to help you understand what you want.
+它是什么
+快速开始（本地运行）
+配置 DeepSeek API
+同步代码仓库
 
-## Local run（本地）
 
-默认开发端口为 **3005**（避免与其它项目冲突）。若你需要 **http://localhost:3000**：
+它是什么
+你可以把一段对话粘贴进来，或者描述一个让你困惑的情境。
+工具会给出三个小反思：
+反思维度说明🎭 情绪识别它注意到的一种情绪🔍 思维定势你可能卡住的地方💬 假设性问题帮你看清自己的需求
 
-```bash
-cd mirror
+它不评判对方，也不预测关系走向。
+目标是帮你理解你自己想要什么。
+
+
+快速开始（本地运行）
+1. 克隆并安装
+bashcd mirror
 npm install
+2. 启动开发服务器
+bash# 默认端口 3005
+npm run dev
+
+# 如果需要 localhost:3000
 npm run dev:3000
-```
+3. 生产构建
+bashnpm run build && npm run start:3000
 
-生产构建后监听 3000：
+配置 DeepSeek API
+本项目通过 Next.js API Route 代理调用 DeepSeek（兼容 OpenAI 接口格式）。
+方式一：浏览器内配置（推荐）
 
-```bash
-npm run build && npm run start:3000
-```
+打开应用首页或进入 /settings
+填写你的 DeepSeek API Key 并保存
+Key 仅存储在本机 localStorage，通过请求头 X-DeepSeek-Key 由服务端转发，不会上传到业务数据库
 
-## DeepSeek API（localhost）
+方式二：服务端环境变量（可选）
+bash# 复制示例文件
+cp .env.example .env.local
+在 .env.local 中填写：
+DEEPSEEK_API_KEY=你的密钥
+# 可选：
+# DEEPSEEK_BASE_URL=
+# DEEPSEEK_MODEL=
 
-本项目通过 **Next.js API Route** 代理调用 [DeepSeek](https://platform.deepseek.com)（OpenAI 兼容接口）。
+⚠️ 请勿将 .env.local 提交到 Git
 
-1. **浏览器内配置（常用）**  
-   打开应用首页或 `/settings`，填写 **DeepSeek API Key** 并保存。Key 存在本机 `localStorage`（键名见设置页说明），请求头会带 `X-DeepSeek-Key`，由服务端转发至 DeepSeek，**不会**存到你自己的业务服务器数据库。
 
-2. **仅服务端密钥（可选）**  
-   复制 `.env.example` 为 `.env.local`，设置 `DEEPSEEK_API_KEY=`。未带请求头时，部分路由会使用该环境变量。请勿把 `.env.local` 提交到 Git。
-
-可选环境变量：`DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`（见 `.env.example`）。
-
-## 仓库与同步
-
-远程仓库：<https://github.com/roye102520-a11y/mirror>
-
-```bash
+同步代码仓库
+远程仓库：https://github.com/roye102520-a11y/mirror
+bash# 拉取最新代码
 git pull origin main
-# …修改后…
+
+# 提交并推送
 git add -A && git commit -m "your message" && git push origin main
-```
