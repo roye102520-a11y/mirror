@@ -34,7 +34,7 @@ export function ReadmeIntro() {
 
       {open ? (
         <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(0,0,0,0.2)] sm:items-center sm:p-6"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-[rgba(0,0,0,0.2)] sm:items-center sm:p-8 pt-20"
           role="presentation"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
@@ -44,7 +44,7 @@ export function ReadmeIntro() {
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="flex max-h-[100dvh] w-full max-w-2xl mx-auto flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-sm sm:max-h-[90vh]"
+            className="flex max-h-[calc(100dvh-5rem)] w-full max-w-2xl mx-auto flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-sm sm:max-h-[80vh] sm:mt-0"
           >
             <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-3">
               <h2 id={titleId} className="text-sm font-normal tracking-wide text-[var(--ink)]">
