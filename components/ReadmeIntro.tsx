@@ -32,8 +32,7 @@ export function ReadmeIntro() {
       </button>
       {open ? (
         <div
-          /* 🌟 修改1：加深了背景变暗的程度 (bg-black/40)，增加了背景模糊效果 (backdrop-blur-sm)，并强制在所有屏幕完全居中 (items-center) */
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 sm:p-6"
+          className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/40 p-4 pt-16 backdrop-blur-sm sm:p-6 sm:pt-20"
           role="presentation"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
@@ -43,8 +42,7 @@ export function ReadmeIntro() {
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            /* 🌟 修改2：将最大宽度固定在 600px，并将阴影改成超大阴影 (shadow-2xl) 让卡片浮现出来 */
-            className="flex max-h-[85vh] w-full max-w-[600px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-2xl"
+            className="my-auto flex max-h-[85vh] w-full max-w-[600px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-3">
               <h2 id={titleId} className="text-sm font-normal tracking-wide text-[var(--ink)]">
