@@ -1,63 +1,29 @@
-🪞 Mirror · 关系反思工具
+# 🪞 Mirror - 关系反思工具
 
-当社交关系让你感到困惑时，用来帮你理清思绪的小工具。
+> 当社交关系让你感到困惑时，用来帮你理清思绪的小工具。
+> **[✨ 点击这里在线体验 Mirror](https://mirror-swart.vercel.app)**
 
-在线体验 → mirror-swart.vercel.app
+## 💡 设计理念
+“我们无法控制他人，但能看清自己。”
 
-目录
+Mirror 并不是一个用来“评判对错”或“预测关系走向”的占卜机。它是一个基于斯多葛派与存在主义哲学视角的疗愈空间。当你输入一段困扰你的对话或情境时，Mirror 会为你提供三个小小的反思：
+1. **一个被你忽略的情绪**
+2. **一个思维上的执念点**
+3. **一个帮你看见自身核心需求的假设性问题**
 
-它是什么
-快速开始（本地运行）
-配置 DeepSeek API
-同步代码仓库
+## ✨ 核心功能
+- **深层觉察扫描**：内置约 60 道选择题与开放题，生成专属你的情绪模式雷达图与哲学解析。
+- **不评判的树洞**：倾听你的叙述，不指责、不站队，只做你情绪的镜子。
+- **沉浸式体验**：极简的视觉设计，搭配呼吸引导，帮你在此刻安定下来。
 
+## 🚀 快速开始 (本地运行)
+如果你想在本地运行这个项目：
 
-它是什么
-你可以把一段对话粘贴进来，或者描述一个让你困惑的情境。
-工具会给出三个小反思：
-反思维度说明🎭 情绪识别它注意到的一种情绪🔍 思维定势你可能卡住的地方💬 假设性问题帮你看清自己的需求
+1. 克隆代码仓库并进入目录
+2. 安装依赖：`npm install`
+3. 配置环境：复制 `.env.example` 文件并重命名为 `.env.local`，填入你的 DeepSeek API 密钥。
+4. 启动项目：`npm run dev`
+5. 在浏览器中打开 `http://localhost:3000`
 
-它不评判对方，也不预测关系走向。
-目标是帮你理解你自己想要什么。
-
-
-快速开始（本地运行）
-1. 克隆并安装
-bashcd mirror
-npm install
-2. 启动开发服务器
-bash# 默认端口 3005
-npm run dev
-
-# 如果需要 localhost:3000
-npm run dev:3000
-3. 生产构建
-bashnpm run build && npm run start:3000
-
-配置 DeepSeek API
-本项目通过 Next.js API Route 代理调用 DeepSeek（兼容 OpenAI 接口格式）。
-方式一：浏览器内配置（推荐）
-
-打开应用首页或进入 /settings
-填写你的 DeepSeek API Key 并保存
-Key 仅存储在本机 localStorage，通过请求头 X-DeepSeek-Key 由服务端转发，不会上传到业务数据库
-
-方式二：服务端环境变量（可选）
-bash# 复制示例文件
-cp .env.example .env.local
-在 .env.local 中填写：
-DEEPSEEK_API_KEY=你的密钥
-# 可选：
-# DEEPSEEK_BASE_URL=
-# DEEPSEEK_MODEL=
-
-⚠️ 请勿将 .env.local 提交到 Git
-
-
-同步代码仓库
-远程仓库：https://github.com/roye102520-a11y/mirror
-bash# 拉取最新代码
-git pull origin main
-
-# 提交并推送
-git add -A && git commit -m "your message" && git push origin main
+---
+*“放下对‘放下’的执着，方得自在。”*
