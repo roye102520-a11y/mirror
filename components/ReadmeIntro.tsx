@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
+
 export function ReadmeIntro() {
   const [open, setOpen] = useState(false);
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!open) return;
     closeRef.current?.focus();
@@ -18,6 +20,7 @@ export function ReadmeIntro() {
       document.body.style.overflow = prev;
     };
   }, [open]);
+
   return (
     <>
       <button
@@ -29,7 +32,8 @@ export function ReadmeIntro() {
       </button>
       {open ? (
         <div
-          className="fixed inset-0 z-[60] flex items-start justify-center bg-[rgba(0,0,0,0.2)] pt-20 sm:items-center sm:pt-0 sm:p-6"
+          /* 🌟 修改1：加深了背景变暗的程度 (bg-black/40)，增加了背景模糊效果 (backdrop-blur-sm)，并强制在所有屏幕完全居中 (items-center) */
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 sm:p-6"
           role="presentation"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) setOpen(false);
@@ -39,7 +43,8 @@ export function ReadmeIntro() {
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="flex max-h-[calc(100dvh-5rem)] w-full max-w-2xl mx-auto flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-sm sm:max-h-[80vh]"
+            /* 🌟 修改2：将最大宽度固定在 600px，并将阴影改成超大阴影 (shadow-2xl) 让卡片浮现出来 */
+            className="flex max-h-[85vh] w-full max-w-[600px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg)] shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-[var(--line)] px-4 py-3">
               <h2 id={titleId} className="text-sm font-normal tracking-wide text-[var(--ink)]">
